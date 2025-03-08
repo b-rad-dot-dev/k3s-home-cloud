@@ -1,0 +1,95 @@
+- name: Setup the ansible user
+  gather_facts: false
+  hosts: all
+  serial: 1
+  tasks:
+    - name: Scan remote for keys for host {{ ansible_host | default(inventory_hostname) }}
+      delegate_to: localhost
+      register: host_keys
+      changed_when: false
+      shell: |
+        ssh-keyscan -p {{ ansible_port | default(22) }} {{ ansible_host | default(inventory_hostname) }} | sort -u
+
+#    - name: Host keys found for {{ ansible_host | default(inventory_hostname) }}
+#      ansible.builtin.debug:
+#        msg: "{{ host_keys.stdout_lines | select('search', item) | list }}"
+#      loop:
+#        - "{{ ansible_host | default(inventory_hostname) }}"
+#
+#    - name: Computed host name
+#      ansible.builtin.debug:
+#        msg: "{{ ( ansible_port | default(22) == 22 ) | ansible.builtin.ternary(item, '[' + item|string + ']:' + ansible_port | default(22) | string) }}"
+#      loop:
+#        - "{{ ansible_host | default(inventory_hostname) }}"
+
+    - name: Update "~/.ssh/known_hosts" with discovered keys
+      delegate_to: localhost
+      known_hosts:
+        state: present
+        # if default port is used, use the key as-is
+        # if custom port is used, convert to [host]:port
+        name: "{{ ( ansible_port | default(22) == 22 ) | ansible.builtin.ternary(item, '[' + item|string + ']:' + ansible_port | default(22) | string) }}"
+        key: "{{ host_keys.stdout_lines | select('search', item) | join('\n') }}"
+      loop:
+        - "{{ ansible_host | default(inventory_hostname) }}"
+
+    - name: Set ssh user for {{ inventory_hostname }}
+      delegate_to: localhost
+      ansible.builtin.set_fact:
+        ansible_user: "{{ hostvars[inventory_hostname].initial_user | default('ansible') }}"
+      when: ansible_user_provisioned == false
+
+    - name: Set the password for {{ ansible_user }} on {{ inventory_hostname }}
+      ansible.builtin.pause:
+        prompt: Enter password for {{ ansible_user }} on {{ inventory_hostname }}
+        echo: false
+      register: password_input
+      run_once: true
+      delegate_to: localhost
+      delegate_facts: true
+      when: ansible_user_provisioned == false
+
+    - name: Store the password
+      delegate_to: localhost
+      ansible.builtin.set_fact:
+        ansible_password: "{{ password_input.user_input }}"
+        ansible_sudo_pass: "{{ password_input.user_input }}"
+      when: ansible_user_provisioned == false
+
+#    - name: Login information for {{ inventory_hostname }}
+#      ansible.builtin.debug:
+#        msg: "The input for {{ inventory_hostname }} is {{ ansible_user }} -> {{ ansible_password }}"
+
+    - name: Create ansible group
+      become: true
+      ansible.builtin.group:
+        name: ansible
+      when: ansible_user_provisioned == false
+
+    - name: Create ansible user
+      become: true
+      ansible.builtin.user:
+        name: ansible
+        groups:
+          - ansible
+        expires: -1
+        password_expire_max: -1
+        shell: /bin/bash
+      when: ansible_user_provisioned == false
+
+    - name: Set ansible user authorized key
+      become: true
+      ansible.posix.authorized_key:
+        user: ansible
+        state: present
+        exclusive: true
+        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+      when: ansible_user_provisioned == false
+
+    - name: Grant passwordless sudo to ansible user
+      become: true
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/ansible
+        content: |
+          ansible ALL=(ALL) NOPASSWD:ALL
+      when: ansible_user_provisioned == false

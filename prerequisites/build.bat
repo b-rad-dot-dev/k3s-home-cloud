@@ -1,0 +1,1 @@
+docker build --pull --no-cache -t k3s-home-cloud:ansible docker

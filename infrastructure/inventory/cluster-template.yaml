@@ -1,0 +1,13 @@
+master:
+  hosts:
+    master:
+      ansible_host: 10.0.0.1
+      initial_user: user
+      ansible_user_provisioned: false
+workers:
+  hosts:
+    wsl:
+      ansible_host: 10.0.0.2
+      ansible_port: 2222
+      initial_user: user
+      ansible_user_provisioned: false

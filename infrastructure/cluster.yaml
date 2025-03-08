@@ -1,0 +1,12 @@
+- name: Provision the k3s cluster
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: List directory contents
+      ansible.builtin.command:
+        cmd: "whoami"
+      register: directory_contents
+
+    - name: Display directory contents
+      debug:
+        msg: "{{ directory_contents }}"
