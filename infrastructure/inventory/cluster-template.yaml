@@ -4,6 +4,7 @@ master:
       ansible_host: 10.0.0.1
       initial_user: user
       ansible_user_provisioned: false
+      primary: true
 workers:
   hosts:
     wsl:

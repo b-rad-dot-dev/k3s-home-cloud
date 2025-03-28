@@ -1,7 +1,7 @@
 #!/bin/bash
 
 docker run \
-  --rm \
+  --name ansible-cli \
   -it \
   -v .:/home/ansible/infrastructure \
   -w /home/ansible/infrastructure \
