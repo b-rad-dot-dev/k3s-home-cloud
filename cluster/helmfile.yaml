@@ -1,8 +1,16 @@
 repositories:
   - name: nvdp
     url: https://nvidia.github.io/k8s-device-plugin
+  - name: csi-driver-nfs
+    url: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
   - name: ollama-helm
     url: https://otwld.github.io/ollama-helm/
+  - name: open-webui
+    url: https://open-webui.github.io/helm-charts
+  - name: metallb
+    url: https://metallb.github.io/metallb
+  - name: ingress-nginx
+    url: https://kubernetes.github.io/ingress-nginx
 
 # Fix cuda related errors with:
 # kubectl cordon <node>
@@ -21,6 +29,10 @@ releases:
     version: 0.17.1
 #    values:
 #      - failOnInitError: true
+  - name: csi-driver-nfs
+    namespace: kube-system
+    chart: csi-driver-nfs/csi-driver-nfs
+    version: 4.11.0
   - name: ollama
     namespace: ollama
     chart: ollama-helm/ollama
@@ -29,6 +41,9 @@ releases:
       - runtimeClassName: nvidia
       - nodeSelector:
           nvidia.com/gpu.memory: "4096"
+      - persistentVolume:
+          enabled: true
+          storageClass: nfs-csi
       - ollama:
           gpu:
             enabled: true
@@ -39,3 +54,27 @@ releases:
               - deepseek-r1:1.5b
             run:
               - deepseek-r1:1.5b
+  - name: open-webui
+    namespace: open-webui
+    chart: open-webui/open-webui
+    version: 5.25.0
+    values:
+      - ollama:
+          enabled: false
+      - persistence:
+          storageClass: nfs-csi
+      - ingress:
+          enabled: true
+          class: nginx
+          host: null # TODO: Update w/ actual hostname
+      - extraEnvVars:
+          - name: OPENAI_API_BASE_URL
+            value: http://ollama.ollama:11434/v1
+  - name: metallb
+    namespace: metallb-system
+    chart: metallb/metallb
+    version: 0.14.9
+  - name: ingress-nginx
+    namespace: ingress-nginx
+    chart: ingress-nginx/ingress-nginx
+    version: 4.12.1
