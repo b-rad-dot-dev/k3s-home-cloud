@@ -11,6 +11,8 @@ repositories:
     url: https://metallb.github.io/metallb
   - name: ingress-nginx
     url: https://kubernetes.github.io/ingress-nginx
+  - name: jetstack
+    url: https://charts.jetstack.io
 
 # Fix cuda related errors with:
 # kubectl cordon <node>
@@ -66,7 +68,11 @@ releases:
       - ingress:
           enabled: true
           class: nginx
-          host: null # TODO: Update w/ actual hostname
+          host: open-webui.b-rad.dev
+          tls: true
+          secretName: null
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-production"
       - extraEnvVars:
           - name: OPENAI_API_BASE_URL
             value: http://ollama.ollama:11434/v1
@@ -78,3 +84,15 @@ releases:
     namespace: ingress-nginx
     chart: ingress-nginx/ingress-nginx
     version: 4.12.1
+    values:
+      - controller:
+          extraArgs:
+            default-ssl-certificate: "cert-manager/nginx-tls" #single wildcard cert for all subdomains
+  - name: cert-manager
+    namespace: cert-manager
+    chart: jetstack/cert-manager
+    version: 1.17.1
+    values:
+      # kubectl -n cert-manager create secret generic acme-dns --from-file acmedns.json
+      - crds:
+          enabled: true

@@ -1,3 +1,4 @@
 .idea
 infrastructure/inventory/cluster.yaml
 infrastructure/k3s-live.yaml.j2
+acmedns.json
