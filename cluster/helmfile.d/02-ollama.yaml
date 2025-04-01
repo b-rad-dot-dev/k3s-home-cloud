@@ -1,0 +1,27 @@
+repositories:
+  - name: ollama-helm
+    url: https://otwld.github.io/ollama-helm/
+
+releases:
+  - name: ollama
+    namespace: ollama
+    chart: ollama-helm/ollama
+    version: 1.11.0
+    values:
+      - runtimeClassName: nvidia
+      - nodeSelector:
+          nvidia.com/gpu.memory: "4096"
+      - persistentVolume:
+          enabled: true
+          storageClass: nfs-csi
+      - ollama:
+          gpu:
+            enabled: true
+            type: nvidia
+            number: 1
+          models:
+            pull:
+              - phi4-mini
+              - deepseek-r1:1.5b
+            run:
+              - phi4-mini

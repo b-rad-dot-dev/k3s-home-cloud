@@ -1,0 +1,25 @@
+repositories:
+  - name: open-webui
+    url: https://open-webui.github.io/helm-charts
+
+releases:
+  - name: open-webui
+    namespace: open-webui
+    chart: open-webui/open-webui
+    version: 5.25.0
+    values:
+      - ollama:
+          enabled: false
+      - persistence:
+          storageClass: nfs-csi
+      - ingress:
+          enabled: true
+          class: nginx
+          host: open-webui.b-rad.dev
+          tls: true
+          secretName: null
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-production"
+      - extraEnvVars:
+          - name: OPENAI_API_BASE_URL
+            value: http://ollama.ollama:11434/v1

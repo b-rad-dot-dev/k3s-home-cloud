@@ -1,0 +1,29 @@
+repositories:
+  - name: twin
+    url: https://twin.github.io/helm-charts
+
+releases:
+  - name: gatus
+    namespace: gatus
+    chart: twin/gatus
+    version: 1.2.0
+    values:
+      - ingress:
+          enabled: true
+          ingressClassName: nginx
+          hosts:
+            - gatus.b-rad.dev
+          tls:
+            - hosts:
+                - gatus.b-rad.dev
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-production"
+      - config:
+          endpoints:
+            - name: Open WebUI
+              url: http://open-webui.open-webui
+              ui:
+                hide-hostname: true
+              interval: 5m
+              conditions:
+                - "[STATUS] == 200"
