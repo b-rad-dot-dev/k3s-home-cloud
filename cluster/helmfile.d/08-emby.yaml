@@ -1,0 +1,4 @@
+releases:
+  - name: emby
+    namespace: emby
+    chart: ../emby

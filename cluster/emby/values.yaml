@@ -1,0 +1,97 @@
+image:
+  repository: linuxserver/emby
+  pullPolicy: IfNotPresent
+  tag: latest
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext: {}
+
+env:
+  - name: TZ
+    value: "America/Los_Angeles"
+  - name: PUID
+    value: "1000"
+  - name: PGID
+    value: "1000"
+
+service:
+  type: ClusterIP
+  port: 8096
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+  hosts:
+    - host: emby.b-rad.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - emby.b-rad.dev
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+persistentVolume:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  annotations: {}
+  size: 5Gi #not really respected when using NFS...which I am
+  storageClass: nfs-csi
+
+# Additional volumes on the output Deployment definition.
+volumes:
+  - name: app-data
+    persistentVolumeClaim:
+      claimName: emby # template emby.fullname
+  - name: shows-01
+    persistentVolumeClaim:
+      claimName: shows-01
+  - name: movies-01
+    persistentVolumeClaim:
+      claimName: movies-01
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+  - name: app-data
+    mountPath: /config
+  - name: shows-01
+    mountPath: /data/tvshows
+  - name: movies-01
+    mountPath: /data/movies
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
