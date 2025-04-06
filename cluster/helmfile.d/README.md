@@ -8,9 +8,9 @@
 |       |           | Homepage    |
 |       |           | Kasm        |
 |       |           | Login       |
-| ✅    |           | Medusa      |
-| ✅    |           | Ntfy        |
-| ✅    |           | qBittorrent |
+| ✅    |  ✅       | Medusa      |
+| ✅    |  ✅       | Ntfy        |
+| ✅    |  ✅       | qBittorrent |
 |       |           | [Docmost](https://github.com/docmost/docmost) |
 
 Notes:
