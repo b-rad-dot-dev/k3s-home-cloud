@@ -45,21 +45,27 @@ ingress:
     - hosts:
         - qbt.b-rad.dev
 
+# TODO: Provide actual resources, UI becomes unresponsive when download speeds get good
+# TODO: and because of that, it may not clean up the extension when finished downloading
+# TODO: or may not send the ntfy notification that the download has finished
 resources: {}
 
-livenessProbe:
-  httpGet:
-    path: /
-    port: http
-readinessProbe:
-  httpGet:
-    path: /
-    port: http
+# When downloading a lot, pods becomes "unreachable" due to bandwidth constraints
+# Disable the probes to keep it working / running in the background without k8s
+# killing it / stopping traffic flow to it
+#livenessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+#readinessProbe:
+#  httpGet:
+#    path: /
+#    port: http
 
 persistentVolume:
   enabled: true
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   annotations: {}
   size: 5Gi #not really respected when using NFS...which I am
   storageClass: nfs-csi
