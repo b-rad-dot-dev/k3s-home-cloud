@@ -1,0 +1,98 @@
+image:
+  repository: binwiederhier/ntfy
+  pullPolicy: IfNotPresent
+  tag: v2.9.0
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+
+# Must manually create the 'cache' folder on the NFS mount for it to start up successfully
+env:
+  - name: NTFY_ENABLE_LOGIN
+    value: "true"
+  - name: NTFY_AUTH_DEFAULT_ACCESS
+    value: "deny-all"
+  - name: NTFY_AUTH_FILE
+    value: "/etc/ntfy/cache/user.db"
+  - name: NTFY_CACHE_FILE
+    value: "/etc/ntfy/cache/cache.db"
+  - name: NTFY_ATTACHMENT_CACHE_DIR
+    value: "/etc/ntfy/cache/attachments"
+  - name: NTFY_BASE_URL
+    value: "https://ntfy.b-rad.dev"
+  - name: NTFY_BEHIND_PROXY
+    value: "true"
+  - name: TZ
+    value: "UTC"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+  hosts:
+    - host: ntfy.b-rad.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - ntfy.b-rad.dev
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+persistentVolume:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  annotations: {}
+  size: 5Gi #not really respected when using NFS...which I am
+  storageClass: nfs-csi
+
+# Additional volumes on the output Deployment definition.
+volumes:
+  - name: app-data
+    persistentVolumeClaim:
+      claimName: ntfy
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+  - name: app-data
+    mountPath: /etc/ntfy
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80

@@ -1,0 +1,4 @@
+releases:
+  - name: ntfy
+    namespace: ntfy
+    chart: ../ntfy
