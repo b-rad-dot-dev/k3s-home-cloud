@@ -1,0 +1,103 @@
+image:
+  repository: pymedusa/medusa
+  pullPolicy: IfNotPresent
+  tag: master
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext: {}
+
+env:
+  - name: TZ
+    value: "America/Los_Angeles"
+
+service:
+  type: ClusterIP
+  port: 8081
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+  hosts:
+    - host: medusa.b-rad.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - medusa.b-rad.dev
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+persistentVolume:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  annotations: {}
+  size: 5Gi #not really respected when using NFS...which I am
+  storageClass: nfs-csi
+
+# Additional volumes on the output Deployment definition.
+volumes:
+  - name: app-data
+    persistentVolumeClaim:
+      claimName: medusa
+  - name: shows-01
+    persistentVolumeClaim:
+      claimName: emby-shows-01
+  - name: movies-01
+    persistentVolumeClaim:
+      claimName: emby-movies-01
+  - name: downloads
+    persistentVolumeClaim:
+      claimName: emby-downloads
+  - name: partials
+    persistentVolumeClaim:
+      claimName: partials
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+  - name: app-data
+    mountPath: /config
+  - name: shows-01
+    mountPath: /data/tvshows
+  - name: movies-01
+    mountPath: /data/movies
+  - name: downloads
+    mountPath: /data/downloads
+  - name: partials
+    mountPath: /data/partials
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
