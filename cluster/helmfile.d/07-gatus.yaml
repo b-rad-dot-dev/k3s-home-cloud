@@ -20,8 +20,43 @@ releases:
             cert-manager.io/cluster-issuer: "letsencrypt-production"
       - config:
           endpoints:
+            - name: Emby
+              url: http://emby.emby:8096
+              ui:
+                hide-hostname: true
+              interval: 5m
+              conditions:
+                - "[STATUS] == 200"
+            - name: Medusa
+              url: http://medusa.medusa:8081
+              ui:
+                hide-hostname: true
+              interval: 5m
+              conditions:
+                - "[STATUS] == 200"
+            - name: Ntfy
+              url: http://ntfy.ntfy
+              ui:
+                hide-hostname: true
+              interval: 5m
+              conditions:
+                - "[STATUS] == 200"
+            - name: Ollama
+              url: http://ollama.ollama:11434
+              ui:
+                hide-hostname: true
+              interval: 5m
+              conditions:
+                - "[STATUS] == 200"
             - name: Open WebUI
               url: http://open-webui.open-webui
+              ui:
+                hide-hostname: true
+              interval: 5m
+              conditions:
+                - "[STATUS] == 200"
+            - name: qBittorrent
+              url: http://qbittorrent.qbittorrent:8080
               ui:
                 hide-hostname: true
               interval: 5m
