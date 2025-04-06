@@ -55,6 +55,13 @@ releases:
               interval: 5m
               conditions:
                 - "[STATUS] == 200"
+            - name: Public IP
+              url: https://icanhazip.com
+              ui:
+                hide-hostname: true
+              interval: 5m
+              conditions:
+                - "[BODY] == 76.104.202.224"
             - name: qBittorrent
               url: http://qbittorrent.qbittorrent:8080
               ui:
