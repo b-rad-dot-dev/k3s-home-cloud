@@ -1,0 +1,4 @@
+releases:
+  - name: qbittorrent
+    namespace: qbittorrent
+    chart: ../qbittorrent
