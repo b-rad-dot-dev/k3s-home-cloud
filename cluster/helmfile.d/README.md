@@ -5,7 +5,7 @@
 | ✅    |           | ComfyUI     |
 | ✅    |  ✅       | Emby        |
 |       |           | Filebrowser |
-|       |           | Homepage    |
+| ✅    |  ✅       | Homepage    |
 |       |           | Kasm        |
 |       |           | Login       |
 | ✅    |  ✅       | Medusa      |
@@ -15,6 +15,4 @@
 
 Notes:
 * All should be secured minus Homepage/Login
-* Medusa / qBittorrent / Emby should share / have access to the same volume mount(s)
-  to process downloaded media and move as appropriate
 * ComfyUI should be spun up on the linux-server
