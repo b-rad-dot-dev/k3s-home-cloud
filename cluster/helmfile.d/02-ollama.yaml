@@ -10,7 +10,7 @@ releases:
     values:
       - runtimeClassName: nvidia
       - nodeSelector:
-          nvidia.com/gpu.memory: "4096"
+          nvidia.com/gpu.memory: "4096" # TODO: Switch with 8192 / comfyui?
       - persistentVolume:
           enabled: true
           storageClass: nfs-csi

@@ -65,7 +65,7 @@ resources: {}
 persistentVolume:
   enabled: true
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   annotations: {}
   size: 5Gi #not really respected when using NFS...which I am
   storageClass: nfs-csi
