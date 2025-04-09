@@ -1,7 +1,10 @@
 image:
-  repository: karsten13/magicmirror
+  repository: registry.b-rad.dev:443/magicmirror
   pullPolicy: IfNotPresent
   tag: latest # fat does not have `ping` installed, need to create my own docker image
+
+imagePullSecrets:
+  - name: registry-credentials
 
 serviceAccount:
   create: true
