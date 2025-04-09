@@ -1,0 +1,4 @@
+releases:
+  - name: registry
+    namespace: registry
+    chart: ../registry

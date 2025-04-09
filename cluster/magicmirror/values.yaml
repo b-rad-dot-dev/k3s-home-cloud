@@ -17,6 +17,10 @@ podSecurityContext:
 
 securityContext: {}
 
+env:
+  - name: TZ
+    value: America/Los_Angeles
+
 service:
   type: LoadBalancer
   port: 8080

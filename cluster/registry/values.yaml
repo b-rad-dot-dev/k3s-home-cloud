@@ -1,0 +1,213 @@
+image:
+  repository: registry
+  pullPolicy: IfNotPresent
+  tag: 3
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext: {}
+
+env:
+  - name: TZ
+    value: America/Los_Angeles
+  - name: REGISTRY_AUTH
+    value: htpasswd
+  - name: REGISTRY_AUTH_HTPASSWD_PATH
+    value: /auth/htpasswd
+  - name: REGISTRY_AUTH_HTPASSWD_REALM
+    value: Registry Realm
+  - name: REGISTRY_HTTP_HEADERS_Access-Control-Allow-Origin
+    value: '[https://registry.b-rad.dev]'
+  - name: REGISTRY_HTTP_HEADERS_Access-Control-Allow-Methods
+    value: '[HEAD,GET,OPTIONS,DELETE]'
+  - name: REGISTRY_HTTP_HEADERS_Access-Control-Allow-Credentials
+    value: '[true]'
+  - name: REGISTRY_HTTP_HEADERS_Access-Control-Allow-Headers
+    value: '[Authorization,Accept,Cache-Control,Content-Type]'
+  - name: REGISTRY_HTTP_HEADERS_Access-Control-Expose-Headers
+    value: '[Docker-Content-Digest]'
+  - name: REGISTRY_STORAGE_DELETE_ENABLED
+    value: 'true'
+
+service:
+  type: ClusterIP
+  port: 5000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    nginx.ingress.kubernetes.io/proxy-body-size: 4G
+  hosts:
+    - host: registry.b-rad.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - registry.b-rad.dev
+
+resources: {}
+
+#livenessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+#readinessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+
+persistentVolume:
+  enabled: true
+  accessModes:
+    - ReadWriteMany
+  annotations: {}
+  size: 5Gi #not really respected when using NFS...which I am
+  storageClass: nfs-csi
+
+# Additional volumes on the output Deployment definition.
+volumes:
+  - name: app-data
+    persistentVolumeClaim:
+      claimName: registry
+
+# Need to pre-create these folders to get uid of 1000
+volumeMounts:
+  - name: app-data
+    mountPath: /var/lib/registry
+    subPath: data
+  - name: app-data
+    mountPath: /auth
+    subPath: auth
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+##############################################################
+##############################################################
+##############################################################
+
+ui:
+  image:
+    repository: joxit/docker-registry-ui
+    pullPolicy: IfNotPresent
+    tag: main
+
+  serviceAccount:
+    create: true
+    automount: true
+    annotations: { }
+    name: ""
+
+  podAnnotations: { }
+  podLabels: { }
+
+  podSecurityContext:
+    fsGroup: 1000
+
+  securityContext: { }
+
+  env:
+    - name: CATALOG_ELEMENTS_LIMIT
+      value: "1000"
+    - name: CATALOG_MAX_BRANCHES
+      value: "1"
+    - name: CATALOG_MIN_BRANCHES
+      value: "1"
+    - name: DELETE_IMAGES
+      value: "true"
+    - name: REGISTRY_SECURED
+      value: "true"
+    - name: REGISTRY_TITLE
+      value: "Docker Registry UI"
+    - name: REGISTRY_URL
+      value: "https://registry.b-rad.dev"
+    - name: SHOW_CATALOG_NB_TAGS
+      value: "true"
+    - name: SHOW_CONTENT_DIGEST
+      value: "true"
+    - name: SINGLE_REGISTRY
+      value: "true"
+    - name: TAGLIST_PAGE_SIZE
+      value: "100"
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-production"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+    hosts:
+      - host: registry.b-rad.dev
+        paths:
+          - path: /ui(/|$)(.*)
+            pathType: ImplementationSpecific
+    tls:
+      - hosts:
+          - registry.b-rad.dev
+
+  resources: { }
+
+  #livenessProbe:
+  #  httpGet:
+  #    path: /
+  #    port: http
+  #readinessProbe:
+  #  httpGet:
+  #    path: /
+  #    port: http
+
+  persistentVolume:
+    enabled: false
+    accessModes:
+      - ReadWriteMany
+    annotations: { }
+    size: 5Gi #not really respected when using NFS...which I am
+    storageClass: nfs-csi
+
+  # Additional volumes on the output Deployment definition.
+  volumes: []
+
+  # Need to pre-create these folders to get uid of 1000
+  volumeMounts: []
+
+  nodeSelector: { }
+
+  tolerations: [ ]
+
+  affinity: { }
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
