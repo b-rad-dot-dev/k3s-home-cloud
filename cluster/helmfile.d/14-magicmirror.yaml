@@ -3,9 +3,7 @@ releases:
     namespace: magicmirror
     chart: ../magicmirror
     values:
+      - image:
+          tag: 20250412-114202
       - nodeSelector:
-          kubernetes.io/hostname: "brad-hppavilionnotebook" # does not work on ARM devices (need to rebuild image)
-#      - tolerations:
-#          - key: "nfd-disable"
-#            operator: "Exists"
-#            effect: "NoSchedule"
+          kubernetes.io/hostname: "pi3-1gb-01"
