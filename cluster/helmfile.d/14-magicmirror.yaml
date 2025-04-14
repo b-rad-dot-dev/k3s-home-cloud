@@ -7,3 +7,8 @@ releases:
           tag: 20250412-114202
       - nodeSelector:
           kubernetes.io/hostname: "pi3-1gb-01"
+      - tolerations:
+          - key: "block"
+            operator: "Equal"
+            value: "pods"
+            effect: "NoSchedule"

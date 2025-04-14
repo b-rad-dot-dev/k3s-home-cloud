@@ -1,0 +1,44 @@
+repositories:
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+
+releases:
+  - name: prometheus-operator-crds
+    namespace: metrics
+    chart: prometheus-community/prometheus-operator-crds
+    version: 19.1.0
+  - name: metrics
+    namespace: metrics
+    chart: ../metrics
+#    installed: false # set to false initially to install the CRDs, then comment out
+    values:
+      - kube-prometheus-stack:
+          crds:
+            enabled: false # installed via the above
+          nodeSelector:
+            kubernetes.io/hostname: "pi5-4gb-01"
+          grafana:
+            nodeSelector:
+              kubernetes.io/hostname: "pi5-4gb-01"
+            service:
+              type: LoadBalancer
+          alertmanager:
+            alertmanagerSpec:
+              nodeSelector:
+                kubernetes.io/hostname: "pi5-4gb-01"
+          prometheusOperator:
+            nodeSelector:
+              kubernetes.io/hostname: "pi5-4gb-01"
+          kube-state-metrics:
+            nodeSelector:
+              kubernetes.io/hostname: "pi5-4gb-01"
+          prometheus-node-exporter:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                      - key: kubernetes.io/hostname
+                        operator: NotIn
+                        values:
+                          - pi3-1gb-01
