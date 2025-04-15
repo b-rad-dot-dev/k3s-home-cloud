@@ -9,3 +9,16 @@ releases:
     version: 0.17.1
     values:
       - failOnInitError: false
+      - nfd:
+#          enabled: true # Need to uncomment this, initially installed w/o helm chart and this doesn't manage it anymore
+          worker:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: kubernetes.io/hostname
+                          operator: NotIn
+                          values:
+                            - pi2-1gb-01
+                            - pi3-1gb-01
