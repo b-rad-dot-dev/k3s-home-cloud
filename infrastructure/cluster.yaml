@@ -10,7 +10,7 @@
 
     - name: Copy k3s config file
       ansible.builtin.template:
-        src: k3s.yaml.j2
+        src: k3s-live.yaml.j2
         dest: /etc/rancher/k3s/config.yaml
       become: true
 
@@ -104,7 +104,19 @@
     - name: Gather service facts
       ansible.builtin.service_facts:
 
+    - name: Service name
+      ansible.builtin.set_fact:
+        k3s_service_name: "{{ 'k3s-agent.service' if hostvars[inventory_hostname].agent == True else 'k3s.service' }}"
+
+#    - name: Service
+#      debug:
+#        msg: "Service Name: {{ k3s_service_name }}"
+#
+#    - name: Service Status
+#      debug:
+#        msg: "Status of {{ k3s_service_name }}: {{ ansible_facts.services.get(k3s_service_name, {}).get(\"state\") }}"
+
     - name: Install k3s
       ansible.builtin.shell:
-        cmd: sh /tmp/k3s-install.sh
-      when: ansible_facts.services.get("k3s.service", {}).get("state") != "running"
+        cmd: "INSTALL_K3S_EXEC='{{ 'agent' if hostvars[inventory_hostname].agent == True else 'server' }}' sh /tmp/k3s-install.sh"
+      when: ansible_facts.services.get(k3s_service_name, {}).get("state") != "running"

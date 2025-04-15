@@ -1,3 +1,6 @@
+#######################################
+## NOTE: DOES NOT WORK IN CHECK MODE ##
+#######################################
 - name: Setup the ansible user
   gather_facts: false
   hosts: all

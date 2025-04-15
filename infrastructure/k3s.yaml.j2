@@ -1,12 +1,15 @@
+{% if not hostvars[inventory_hostname].agent is true %}
 write-kubeconfig-mode: "0644"
 cluster-init: true
 role: server
-token: "<token>"
 disable:
   - "servicelb"
   - "traefik"
   - "localstorage"
+datastore-endpoint: <endpoint>
+{% endif %}
+
+token: "<token>"
 {% if not hostvars[inventory_hostname].primary is true %}
 server: https://{{ hostvars | dict2items | selectattr('value.primary', 'defined') | selectattr('value.primary', 'equalto', true) | map(attribute='value.ansible_host') | first }}:6443
 {% endif %}
-datastore-endpoint: <endpoint>
