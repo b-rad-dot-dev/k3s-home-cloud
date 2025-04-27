@@ -2,3 +2,5 @@
 infrastructure/inventory/cluster.yaml
 infrastructure/k3s-live.yaml.j2
 acmedns.json
+node_modules/
+cluster/jwt-login/docker/jwt-login/bin/

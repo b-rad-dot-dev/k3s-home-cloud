@@ -1,0 +1,86 @@
+replicaCount: 1
+
+image:
+  repository: registry.b-rad.dev:443/jwt-login
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets:
+  - name: registry-credentials
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+env:
+  - name: DB_HOST
+    value: "10.0.0.15"
+  - name: DB_USER
+    value: "postgres"
+
+service:
+  type: LoadBalancer
+  port: 4000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+  hosts:
+    - host: login.b-rad.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - login.b-rad.dev
+
+resources: {}
+
+#livenessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+#readinessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+volumes:
+ - name: db-password
+   secret:
+     secretName: postgres-credentials
+     items:
+       - key: password
+         path: password
+
+volumeMounts:
+ - name: db-password
+   mountPath: "/run/secrets/database.password"
+   subPath: password
+   readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -1,0 +1,9 @@
+releases:
+  - name: jwt-login
+    namespace: jwt-login
+    chart: ../jwt-login
+    values:
+      - image:
+          tag: 20250427-141236
+      - nodeSelector:
+          kubernetes.io/hostname: "brad-hppavilionnotebook"
