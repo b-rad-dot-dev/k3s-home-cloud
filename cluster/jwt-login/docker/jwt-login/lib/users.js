@@ -19,6 +19,12 @@ async function getUserAndPasswordAndSitesByUsername(username) {
     return rows;
 }
 
+async function getUserAndSitesByUsername(username) {
+    const connection = getConnection();
+    const {rows} = await connection.query("SELECT u.username, uas.sites FROM users u LEFT JOIN user_allowed_sites uas ON u.id = uas.user_id WHERE u.username = $1 ORDER BY u.id ASC", [username]);
+    return rows;
+}
+
 async function addUserObject(user) {
     const connection = getConnection();
     const {rows} = await connection.query("INSERT INTO users(username, password) VALUES ($1, $2) RETURNING *", [user.username, user.password]);
@@ -58,6 +64,7 @@ module.exports = {
     getUserByNameAndRoleId: getUserByNameAndRoleId,
     getAllUsersWithRoleAndSites: getAllUsersWithRoleAndSites,
     getUserAndPasswordAndSitesByUsername: getUserAndPasswordAndSitesByUsername,
+    getUserAndSitesByUsername: getUserAndSitesByUsername,
     addUserObject: addUserObject,
     updateUserRoleById: updateUserRoleById,
     updateUserAllowedSitesByUserId: updateUserAllowedSitesByUserId,

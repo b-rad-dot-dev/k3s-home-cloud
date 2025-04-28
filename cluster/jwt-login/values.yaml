@@ -28,9 +28,11 @@ env:
     value: "10.0.0.15"
   - name: DB_USER
     value: "postgres"
+  - name: COOKIE_DOMAIN
+    value: "b-rad.dev"
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 4000
 
 ingress:
@@ -72,11 +74,21 @@ volumes:
      items:
        - key: password
          path: password
+ - name: jwt-secret
+   secret:
+     secretName: jwt-secret
+     items:
+       - key: jwt-secret
+         path: jwt-secret
 
 volumeMounts:
  - name: db-password
    mountPath: "/run/secrets/database.password"
    subPath: password
+   readOnly: true
+ - name: jwt-secret
+   mountPath: "/run/secrets/jwt.secret"
+   subPath: jwt-secret
    readOnly: true
 
 nodeSelector: {}
