@@ -1,0 +1,89 @@
+image:
+  repository: yanwk/comfyui-boot
+  pullPolicy: IfNotPresent
+  tag: cu124-megapak-20250428
+#  command:
+#    - sleep
+#    - infinity
+#    - python3
+#    - -c
+#    - "import torch; torch.cuda.is_available()"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext:
+  fsGroup: 0 # Don't think this worked, think I had to set permissions on the NFS server itself (give everyone R/W access)
+             # then mounted NFS volume to local host, went to the comfyui directory, and chown -R root:root, and that eventually worked
+
+runtimeClassName: nvidia
+
+env: []
+
+service:
+  type: LoadBalancer
+  port: 8188
+
+# TODO: Enable once secured Nginx Ingress is working
+ingress:
+  enabled: false
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+  hosts:
+    - host: comfyui.b-rad.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - comfyui.b-rad.dev
+
+resources: {}
+
+#livenessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+#readinessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+
+persistentVolume:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  annotations: {}
+  size: 5Gi #not really respected when using NFS...which I am
+  storageClass: nfs-csi
+
+# Additional volumes on the output Deployment definition.
+volumes:
+  - name: app-data
+    persistentVolumeClaim:
+      claimName: comfyui
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+  - name: app-data
+    mountPath: /root
+
+tolerations: []
+
+affinity: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80

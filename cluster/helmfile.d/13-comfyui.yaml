@@ -1,0 +1,10 @@
+releases:
+  - name: comfyui
+    namespace: comfyui
+    chart: ../comfyui
+    values:
+      - nodeSelector:
+          kubernetes.io/hostname: "linux-server"
+      - resources:
+          limits:
+            nvidia.com/gpu: 1 # Specify 1 gpy, but use node selector to target WHICH gpu
