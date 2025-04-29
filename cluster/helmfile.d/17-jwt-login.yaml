@@ -4,6 +4,6 @@ releases:
     chart: ../jwt-login
     values:
       - image:
-          tag: 20250427-211932
+          tag: 20250428-214438
       - nodeSelector:
           kubernetes.io/hostname: "brad-hppavilionnotebook"

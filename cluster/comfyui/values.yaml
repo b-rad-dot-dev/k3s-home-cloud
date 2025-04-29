@@ -34,10 +34,11 @@ service:
 
 # TODO: Enable once secured Nginx Ingress is working
 ingress:
-  enabled: false
+  enabled: true
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
+    nginx.ingress.kubernetes.io/auth-url: https://login.b-rad.dev/authorize
   hosts:
     - host: comfyui.b-rad.dev
       paths:

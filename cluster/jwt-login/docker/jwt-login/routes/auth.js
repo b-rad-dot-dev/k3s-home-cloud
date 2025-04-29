@@ -136,12 +136,16 @@ router.post('/authentication', async function(req, res, next) {
             is_admin: is_admin,
             allowed_sites: user.sites === null ? "" : user.sites
         }, JWT_SECRET, {
-            expiresIn: '8h',
+            expiresIn: '30d',
         });
         const now = new Date();
-        const expiresDate = new Date(now.getTime() + (8*60*60*1000));
+        const SECOND = 1000;
+        const MINUTE = 60 * SECOND;
+        const HOUR = 60 * MINUTE;
+        const DAY = 24 * HOUR;
+        const expiresDate = new Date(now.getTime() + (30 * DAY));
         res.cookie(JWT_COOKIE_NAME, token, {
-            secure: false, //TODO: set to true
+            secure: true,
             httpOnly: true,
             domain: COOKIE_DOMAIN,
             expires: expiresDate
@@ -454,14 +458,43 @@ router.get('/authorize', expressjwt({
         return req.cookies[JWT_COOKIE_NAME];
     }
 }), async function(req, res, next) {
-    if (req.auth.username) {
+    if (req?.auth?.username) {
         const userInfo = await getUserAndSitesByUsername(req.auth.username);
         if(userInfo.length === 0) {
             res.status(403).send(); //logged in but don't have any allowed sites = Forbidden
             return;
         }
 
-        const refererUrl = req.header("referer") || `https://www.${COOKIE_DOMAIN}`;
+        //TODO: Extract this into a function, used here and in /authenticate
+        const SECOND = 1000;
+        const MINUTE = 60 * SECOND;
+        const HOUR = 60 * MINUTE;
+        const DAY = 24 * HOUR;
+        const REFRESH_THRESHOLD = 7 * DAY;
+
+        const NOW = Date.now();
+        const tokenExpiresOn = new Date(req.auth.exp * SECOND);
+
+        if(tokenExpiresOn - NOW < REFRESH_THRESHOLD) {
+            console.log("Refreshing JWT that expires in less than 7 days...");
+            const token = jwt.sign({
+                username: req.auth.username,
+                is_admin: req.auth.is_admin,
+                allowed_sites: req.auth.allowed_sites
+            }, JWT_SECRET, {
+                expiresIn: '30d',
+            });
+            const now = new Date();
+            const expiresDate = new Date(now.getTime() + (30 * DAY));
+            res.cookie(JWT_COOKIE_NAME, token, {
+                secure: true,
+                httpOnly: true,
+                domain: COOKIE_DOMAIN,
+                expires: expiresDate
+            });
+        }
+
+        const refererUrl = req.header("x-original-url") || `https://www.${COOKIE_DOMAIN}`;
         if(!refererUrl.includes(COOKIE_DOMAIN)) {
             res.status(403).send(); //logged in but referer is not the cookie domain = Forbidden
             return;
@@ -480,7 +513,8 @@ router.get('/authorize', expressjwt({
             res.status(401).send(); //logged in but don't have the required allowed sites = Unauthorized
         }
     } else {
-        res.redirect('/login');
+        // not logged in (shouldn't ever get here, but just in case)
+        res.status(403).send();
     }
 });
 
