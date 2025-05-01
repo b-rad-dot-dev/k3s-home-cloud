@@ -1,0 +1,24 @@
+releases:
+  - name: comfyui-discord-bot
+    namespace: comfyui-discord-bot
+    chart: ../comfyui-discord-bot
+    values:
+      - image:
+          tag: 20250430-203347
+      - env:
+          - name: BOT_TYPE
+            value: "PRODUCTION"
+          - name: VERSION
+            value: "0.9.0"
+          - name: COMFYUI_ADDRESS
+            value: "comfyui.comfyui:8188"
+          - name: DEVELOPMENT_BOT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: bot-tokens
+                key: development
+          - name: PRODUCTION_BOT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: bot-tokens
+                key: production

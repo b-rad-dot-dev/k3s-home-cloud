@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bot-tokens
+  namespace: comfyui-discord-bot
+type: Opaque
+data:
+  development: <base64 encoded token, e.g. echo -n "token" | base64 -w0 >
+  production: <base64 encoded token, e.g. echo -n "token" | base64 -w0 >
