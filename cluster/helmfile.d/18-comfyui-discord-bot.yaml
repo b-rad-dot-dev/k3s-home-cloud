@@ -26,10 +26,16 @@ releases:
           - name: comfyui-data
             persistentVolumeClaim:
               claimName: comfyui-data
+          - name: bot-data
+            persistentVolumeClaim:
+              claimName: comfyui-discord-bot
       - volumeMounts:
           - name: comfyui-data
             mountPath: /mnt/comfyui-models
             subPath: comfyui-comfyui/ComfyUI/models
+          - name: bot-data
+            mountPath: /app/src/models
+            subPath: production
       - dev:
           image:
             tag: 20250502-203917
@@ -54,7 +60,13 @@ releases:
             - name: comfyui-data
               persistentVolumeClaim:
                 claimName: comfyui-data
+            - name: bot-data
+              persistentVolumeClaim:
+                claimName: comfyui-discord-bot
           volumeMounts:
             - name: comfyui-data
               mountPath: /mnt/comfyui-models
               subPath: comfyui-comfyui/ComfyUI/models
+            - name: bot-data
+              mountPath: /app/src/models
+              subPath: development
