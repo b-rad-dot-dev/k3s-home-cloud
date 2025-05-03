@@ -4,12 +4,12 @@ releases:
     chart: ../comfyui-discord-bot
     values:
       - image:
-          tag: 20250430-203347
+          tag: 20250502-203917
       - env:
           - name: BOT_TYPE
             value: "PRODUCTION"
           - name: VERSION
-            value: "0.9.0"
+            value: "0.10.0"
           - name: COMFYUI_ADDRESS
             value: "comfyui.comfyui:8188"
           - name: DEVELOPMENT_BOT_TOKEN
@@ -24,12 +24,12 @@ releases:
                 key: production
       - dev:
           image:
-            tag: 20250430-203347
+            tag: 20250502-203917
           env:
             - name: BOT_TYPE
               value: "DEVELOPMENT"
             - name: VERSION
-              value: "0.9.0"
+              value: "0.10.0"
             - name: COMFYUI_ADDRESS
               value: "comfyui.comfyui:8188"
             - name: DEVELOPMENT_BOT_TOKEN
