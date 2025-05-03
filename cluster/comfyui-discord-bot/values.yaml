@@ -3,6 +3,8 @@ dev:
     repository: registry.b-rad.dev:443/comfyui-discord-bot
     tag: ""
   env: []
+  volumes: []
+  volumeMounts: []
 
 replicaCount: 1
 

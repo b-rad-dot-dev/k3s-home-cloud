@@ -22,6 +22,14 @@ releases:
               secretKeyRef:
                 name: bot-tokens
                 key: production
+      - volumes:
+          - name: comfyui-data
+            persistentVolumeClaim:
+              claimName: comfyui-data
+      - volumeMounts:
+          - name: comfyui-data
+            mountPath: /mnt/comfyui-models
+            subPath: comfyui-comfyui/ComfyUI/models
       - dev:
           image:
             tag: 20250502-203917
@@ -42,3 +50,11 @@ releases:
                 secretKeyRef:
                   name: bot-tokens
                   key: production
+          volumes:
+            - name: comfyui-data
+              persistentVolumeClaim:
+                claimName: comfyui-data
+          volumeMounts:
+            - name: comfyui-data
+              mountPath: /mnt/comfyui-models
+              subPath: comfyui-comfyui/ComfyUI/models
