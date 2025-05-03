@@ -1,3 +1,9 @@
+dev:
+  image:
+    repository: registry.b-rad.dev:443/comfyui-discord-bot
+    tag: ""
+  env: []
+
 replicaCount: 1
 
 image:

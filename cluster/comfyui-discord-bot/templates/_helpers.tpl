@@ -43,11 +43,31 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
+Common labels
+*/}}
+{{- define "comfyui-discord-bot.labels-dev" -}}
+helm.sh/chart: {{ include "comfyui-discord-bot.chart" . }}
+{{ include "comfyui-discord-bot.selectorLabels-dev" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
 Selector labels
 */}}
 {{- define "comfyui-discord-bot.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "comfyui-discord-bot.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "comfyui-discord-bot.selectorLabels-dev" -}}
+app.kubernetes.io/name: {{ include "comfyui-discord-bot.name" . }}-dev
+app.kubernetes.io/instance: {{ .Release.Name }}-dev
 {{- end }}
 
 {{/*
