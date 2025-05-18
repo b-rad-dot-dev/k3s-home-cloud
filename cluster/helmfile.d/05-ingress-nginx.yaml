@@ -11,3 +11,5 @@ releases:
       - controller:
           extraArgs:
             default-ssl-certificate: "cert-manager/nginx-tls" #single wildcard cert for all subdomains
+          config:
+            proxy-body-size: 50m
