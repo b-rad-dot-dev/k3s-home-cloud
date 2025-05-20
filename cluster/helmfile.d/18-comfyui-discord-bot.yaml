@@ -4,14 +4,16 @@ releases:
     chart: ../comfyui-discord-bot
     values:
       - image:
-          tag: 20250502-203917
+          tag: 20250519-182744
       - env:
           - name: BOT_TYPE
             value: "PRODUCTION"
           - name: VERSION
-            value: "0.10.0"
+            value: "0.11.0"
           - name: COMFYUI_ADDRESS
             value: "comfyui.comfyui:8188"
+          - name: COMFYUI_MODEL_CHECKPOINT_PATH
+            value: "/mnt/comfyui-models/checkpoints"
           - name: DEVELOPMENT_BOT_TOKEN
             valueFrom:
               secretKeyRef:
@@ -35,17 +37,22 @@ releases:
             subPath: comfyui-comfyui/ComfyUI/models
           - name: bot-data
             mountPath: /app/src/models
-            subPath: production
+            subPath: production/models
+          - name: bot-data
+            mountPath: /app/src/workflows
+            subPath: production/workflows
       - dev:
           image:
-            tag: 20250502-203917
+            tag: 20250519-182744
           env:
             - name: BOT_TYPE
               value: "DEVELOPMENT"
             - name: VERSION
-              value: "0.10.0"
+              value: "0.11.0"
             - name: COMFYUI_ADDRESS
               value: "comfyui.comfyui:8188"
+            - name: COMFYUI_MODEL_CHECKPOINT_PATH
+              value: "/mnt/comfyui-models/checkpoints"
             - name: DEVELOPMENT_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -69,4 +76,7 @@ releases:
               subPath: comfyui-comfyui/ComfyUI/models
             - name: bot-data
               mountPath: /app/src/models
-              subPath: development
+              subPath: development/models
+            - name: bot-data
+              mountPath: /app/src/workflows
+              subPath: development/workflows
