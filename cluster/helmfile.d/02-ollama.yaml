@@ -14,6 +14,8 @@ releases:
       - persistentVolume:
           enabled: true
           storageClass: nfs-csi
+      - service:
+          type: LoadBalancer
       - ollama:
           gpu:
             enabled: true
