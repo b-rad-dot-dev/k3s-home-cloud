@@ -69,3 +69,17 @@ releases:
               interval: 5m
               conditions:
                 - "[STATUS] == 200"
+            - name: ComfyUI
+              url: http://comfyui.comfyui:8188
+              ui:
+                hide-hostname: true
+              interval: 5m
+              conditions:
+                - "[STATUS] == 200"
+            - name: ComfyUI - 4090
+              url: http://comfyui-4090.default
+              ui:
+                hide-hostname: true
+              interval: 5m
+              conditions:
+                - "[STATUS] == 200"
