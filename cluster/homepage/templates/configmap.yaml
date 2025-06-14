@@ -15,5 +15,20 @@ data:
         location / {
             try_files $uri $uri/ =404;
         }
+
+        location ^~ /images/ai/lora/list/ {
+            alias /usr/share/nginx/html/images/ai/lora/;
+            autoindex on;
+            index off;
+        }
+
+        location /images/ai/lora/ {
+            index index.html;
+        }
+
+        location ~* \.(jpg|jpeg|png|gif|webp|svg)$ {
+            expires 30d;
+            add_header Cache-Control "public, max-age=2592000, immutable";
+        }
     }
 
