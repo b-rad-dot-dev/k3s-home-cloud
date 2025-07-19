@@ -4,3 +4,5 @@ infrastructure/k3s-live.yaml.j2
 acmedns.json
 node_modules/
 cluster/jwt-login/docker/jwt-login/bin/
+cluster/jwt-secret.txt
+cluster/4090/docker-compose.yml

@@ -1,0 +1,92 @@
+image:
+  repository: ghcr.io/home-assistant/home-assistant
+  pullPolicy: IfNotPresent
+  tag: stable
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+  privileged: true
+#  capabilities:
+#    add:
+#      - SYS_RAWIO
+
+env: []
+
+service:
+  type: LoadBalancer
+  port: 8123
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    nginx.ingress.kubernetes.io/auth-url: https://login.b-rad.dev/authorize
+  hosts:
+    - host: home-assistant.b-rad.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - home-assistant.b-rad.dev
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+persistentVolume:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  annotations: {}
+  size: 5Gi #not really respected when using NFS...which I am
+  storageClass: nfs-csi
+
+# Additional volumes on the output Deployment definition.
+volumes:
+  - name: app-data
+    persistentVolumeClaim:
+      claimName: home-assistant
+  - name: zigbee-usb
+    hostPath:
+      path: /dev/ttyUSB0
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+  - name: app-data
+    mountPath: /config
+  - name: zigbee-usb
+    mountPath: /dev/ttyUSB0
+
+nodeSelector:
+  feature.node.kubernetes.io/usb-ff_10c4_ea60.present: "true"
+
+tolerations: []
+
+affinity: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
