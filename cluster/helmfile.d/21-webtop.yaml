@@ -1,0 +1,4 @@
+releases:
+  - name: webtop
+    namespace: webtop
+    chart: ../webtop

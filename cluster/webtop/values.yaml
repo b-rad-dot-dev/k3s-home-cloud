@@ -1,0 +1,105 @@
+replicaCount: 1
+
+image:
+  repository: lscr.io/linuxserver/webtop
+  pullPolicy: IfNotPresent
+  tag: "ubuntu-kde"
+
+env:
+  - name: PUID
+    value: "1001"
+  - name: PGID
+    value: "1001"
+  - name: TZ
+    value: "America/Los_Angeles"
+  - name: SUBFOLDER
+    value: "/"
+  - name: TITLE
+    value: "Desktop"
+  - name: LC_ALL
+    value: "en_US.UTF-8"
+  - name: LC_ALL
+    value: "en_US.UTF-8"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+runtimeClassName: nvidia
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    nginx.ingress.kubernetes.io/auth-url: https://login.b-rad.dev/authorize
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "webtop"
+    nginx.ingress.kubernetes.io/upgrade: "websocket"
+  hosts:
+    - host: desktop.b-rad.dev
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - desktop.b-rad.dev
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+persistentVolume:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  annotations: {}
+  size: 5Gi #not really respected when using NFS...which I am
+  storageClass: nfs-csi
+
+volumes:
+  - name: user-data
+    persistentVolumeClaim:
+      claimName: webtop
+
+volumeMounts:
+  - name: user-data
+    mountPath: /config
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
