@@ -70,6 +70,21 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+        - name: dind
+          image: docker:28-dind
+          securityContext:
+            privileged: true
+          args:
+            - --host=tcp://0.0.0.0:2376
+            - --host=unix:///var/run/docker.sock
+          env:
+            #- name: DOCKER_TLS_CERTDIR
+            #  value: ""   # disable TLS
+            - name: DOCKER_TLS_CERTDIR
+              value: "/certs"
+          volumeMounts:
+            - name: docker-certs
+              mountPath: /certs
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

@@ -1,9 +1,9 @@
 replicaCount: 1
 
 image:
-  repository: lscr.io/linuxserver/webtop
+  repository: registry.b-rad.dev:443/webtop-ubuntu-kde
   pullPolicy: IfNotPresent
-  tag: "ubuntu-kde"
+  tag: "20250921-172819"
 
 env:
   - name: PUID
@@ -20,8 +20,15 @@ env:
     value: "en_US.UTF-8"
   - name: LC_ALL
     value: "en_US.UTF-8"
+  - name: DOCKER_HOST
+    value: "tcp://localhost:2376"
+  - name: DOCKER_TLS_VERIFY
+    value: "1"
+  - name: DOCKER_CERT_PATH
+    value: "/certs/client"
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: registry-credentials
 nameOverride: ""
 fullnameOverride: ""
 
@@ -93,10 +100,15 @@ volumes:
   - name: user-data
     persistentVolumeClaim:
       claimName: webtop
+  - name: docker-certs
+    emptyDir: {}
 
 volumeMounts:
   - name: user-data
     mountPath: /config
+  - name: docker-certs
+    mountPath: /certs/client
+    subPath: client
 
 nodeSelector: {}
 
