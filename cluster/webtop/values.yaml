@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: registry.b-rad.dev:443/webtop-ubuntu-kde
   pullPolicy: IfNotPresent
-  tag: "20250921-172819"
+  tag: "20250921-201649"
 
 env:
   - name: PUID
