@@ -25,10 +25,15 @@ releases:
             type: nvidia
             number: 1
           models:
+            # This didn't work, but manually created it within the pod and now it's on the NFS volume
+            # create:
+            #   - name: Qwen3-4B-Q4_K_M:latest
+            #     template: |
+            #       FROM /root/.ollama/Qwen3-4B-Instruct-2507-Q4_K_M.gguf
             pull:
               - phi4-mini
               - deepseek-r1:1.5b
-              - qwen3:4b
+              - qwen2.5:3b-instruct-q8_0
               - llama3.2:3b
             run:
-              - llama3.2:3b
+              - qwen2.5:3b-instruct-q8_0

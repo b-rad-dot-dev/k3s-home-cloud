@@ -22,8 +22,8 @@ data:
             default: [
               "phi4-mini",
               "deepseek-r1:1.5b",
-              "qwen3:4b",
-              "llama3.2:3b"
+              "llama3.2:3b",
+              "qwen2.5:3b-instruct-q8_0"
             ]
             fetch: true
           titleConvo: true
