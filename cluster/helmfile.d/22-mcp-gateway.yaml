@@ -1,0 +1,4 @@
+releases:
+  - name: mcp-gateway
+    namespace: mcp
+    chart: ../mcp-gateway

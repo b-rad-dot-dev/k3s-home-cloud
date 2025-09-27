@@ -1,0 +1,37 @@
+librechat:
+  service:
+    type: LoadBalancer
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-production"
+    hosts:
+      - host: librechat.b-rad.dev
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - hosts:
+          - librechat.b-rad.dev
+
+
+  mongodb:
+    persistence:
+      accessModes:
+        - ReadWriteMany
+      storageClass: nfs-csi
+
+  # Needed to manually do chmod -R 777 on it's auto-created volume
+  meilisearch:
+    persistence:
+      accessMode: ReadWriteMany
+      storageClass: nfs-csi
+
+  librechat:
+    existingConfigYaml: "librechat-config"
+    configEnv:
+      ALLOW_REGISTRATION: "false"
+    imageVolume:
+      accessModes: ReadWriteMany
+      storageClassName: nfs-csi

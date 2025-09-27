@@ -1,0 +1,4 @@
+releases:
+  - name: librechat
+    namespace: librechat
+    chart: ../librechat

@@ -1,22 +1,25 @@
-#apiVersion: v1
-#kind: Endpoints
-#metadata:
-#  name: lm-studio
-#subsets:
-#  - addresses:
-#      - ip: 10.0.0.21
-#    ports:
-#      - port: 1234
-#---
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: lm-studio
-#spec:
-#  ports:
-#    - port: 80
-#      targetPort: 1234
-#---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: lm-studio
+  labels:
+    kubernetes.io/service-name: lm-studio
+addressType: IPv4
+ports:
+  - port: 1234
+endpoints:
+  - addresses:
+      - 10.0.0.21
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lm-studio
+spec:
+  ports:
+    - port: 80
+      targetPort: 1234
+---
 apiVersion: discovery.k8s.io/v1
 kind: EndpointSlice
 metadata:

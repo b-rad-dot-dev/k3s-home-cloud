@@ -7,7 +7,10 @@ releases:
     namespace: ollama
     chart: ollama-helm/ollama
     version: 1.11.0
+#    version: 1.30.0
     values:
+      - image:
+          tag: 0.12.2
       - runtimeClassName: nvidia
       - nodeSelector:
           nvidia.com/gpu.memory: "4096" # TODO: Switch with 8192 / comfyui?
@@ -25,5 +28,7 @@ releases:
             pull:
               - phi4-mini
               - deepseek-r1:1.5b
+              - qwen3:4b
+              - llama3.2:3b
             run:
-              - phi4-mini
+              - llama3.2:3b

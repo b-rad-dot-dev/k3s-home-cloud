@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-gateway
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: mcp-gateway
+  template:
+    metadata:
+      labels:
+        app: mcp-gateway
+    spec:
+      containers:
+        - name: mcp-gateway
+          image: docker/mcp-gateway:dind
+          args:
+            - "--catalog=/mcp/catalog.yaml"
+            #- "--catalog=/etc/mcp/catalog.yaml"
+            #- "--secrets=/mnt/secret/mcp_secret"
+            - "--port=8080"
+            - "--transport=streaming"
+            - "--servers=home-assistant"
+            - "--verbose"
+          env:
+            - name: DOCKER_HOST
+              value: "tcp://localhost:2376"
+            - name: DOCKER_TLS_VERIFY
+              value: "1"
+            - name: DOCKER_CERT_PATH
+              value: "/certs/client"
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          volumeMounts:
+            #- name: config
+            #  mountPath: /etc/mcp
+            - name: docker-certs
+              mountPath: /certs/client
+              subPath: client
+            - name: dot-env
+              mountPath: /mnt/secret
+              readOnly: true
+            - name: mcp-storage
+              mountPath: /mcp
+        - name: dind
+          image: docker:28-dind
+          securityContext:
+            privileged: true
+          args:
+            - --host=tcp://0.0.0.0:2376
+            - --host=unix:///var/run/docker.sock
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: "/certs"
+          volumeMounts:
+            - name: docker-certs
+              mountPath: /certs
+      volumes:
+        #- name: config
+        #  configMap:
+        #    name: mcp-gateway-config
+        - name: dot-env
+          secret:
+            secretName: dot-env
+            items:
+              - key: mcp_secret
+                path: mcp_secret
+        - name: mcp-storage
+          persistentVolumeClaim:
+            claimName: mcp-storage
+        - name: docker-certs
+          emptyDir: {}

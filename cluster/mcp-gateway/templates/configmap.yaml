@@ -1,0 +1,28 @@
+##########################################################################################
+# This is actually on the NFS mount. Currently unable to get secrets to load via the env #
+# file when running on linux / in docker. Open PR to fix it                              #
+##########################################################################################
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: mcp-gateway-config
+#data:
+#  # registry.yaml: |
+#  #   servers:
+#  #     home-assistant:
+#  #       url: http://home-assistant.home-assistant:8123/mcp_server/sse
+#  #     time:
+#  #       url: http://mcp-time.mcp:3000
+#  catalog.yaml: |
+#    # Updates to this must also have the server enabled in the deployment
+#    registry:
+#      home-assistant:
+#        remote:
+#          url: "http://home-assistant.home-assistant:8123/mcp_server/sse"
+#          transport_type: sse
+#          headers:
+#            Authorization: "Bearer ${HOME_ASSISTANT_ACCESS_TOKEN}"
+#          secrets:
+#            - name: home_assistant.access_token
+#              env: HOME_ASSISTANT_ACCESS_TOKEN
+#              example: <YOUR_TOKEN>
