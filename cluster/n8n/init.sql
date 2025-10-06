@@ -1,0 +1,5 @@
+CREATE DATABASE n8n;
+CREATE USER n8n_user WITH PASSWORD '<replace me>';
+GRANT ALL PRIVILEGES ON DATABASE n8n TO n8n_user;
+-- \connect n8n
+GRANT ALL PRIVILEGES ON SCHEMA public TO n8n_user;

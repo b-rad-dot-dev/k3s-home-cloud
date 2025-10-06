@@ -1,0 +1,108 @@
+replicaCount: 1
+
+image:
+  repository: docker.n8n.io/n8nio/n8n
+  pullPolicy: IfNotPresent
+  # https://github.com/n8n-io/n8n/releases
+  tag: "1.114.2"
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+env:
+  - name: GENERIC_TIMEZONE
+    value: "America/Los_Angeles"
+  - name: TZ
+    value: "America/Los_Angeles"
+  - name: N8N_RUNNERS_ENABLED
+    value: "true"
+  - name: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+    value: "true"
+  - name: N8N_BLOCK_ENV_ACCESS_IN_NODE
+    value: "true"
+  - name: N8N_GIT_NODE_DISABLE_BARE_REPOS
+    value: "true"
+  - name: DB_TYPE
+    value: "postgresdb"
+  - name: DB_POSTGRESDB_DATABASE
+    value: "n8n"
+  - name: DB_POSTGRESDB_HOST
+    valueFrom:
+      secretKeyRef:
+        name: postgres-credentials
+        key: host
+  - name: DB_POSTGRESDB_PORT
+    valueFrom:
+      secretKeyRef:
+        name: postgres-credentials
+        key: port
+  - name: DB_POSTGRESDB_USER
+    valueFrom:
+      secretKeyRef:
+        name: postgres-credentials
+        key: username
+  - name: DB_POSTGRESDB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgres-credentials
+        key: password
+
+service:
+  type: ClusterIP
+  port: 5678
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+  hosts:
+    - host: n8n.b-rad.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+resources: {}
+
+#livenessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+#readinessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+volumes:
+  - name: n8n-data
+    persistentVolumeClaim:
+      claimName: n8n
+
+volumeMounts:
+  - name: n8n-data
+    mountPath: /home/node/.n8n
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
