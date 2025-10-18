@@ -1,0 +1,75 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/triliumnext/trilium
+  pullPolicy: IfNotPresent
+  tag: "v0.99.1"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+env:
+  - name: TRILIUM_PORT
+    value: "8080"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+  hosts:
+    - host: trilium.b-rad.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+volumes:
+  - name: trilium-data
+    persistentVolumeClaim:
+      claimName: trilium-next
+
+volumeMounts:
+  - name: trilium-data
+    mountPath: /home/node/trilium-data
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

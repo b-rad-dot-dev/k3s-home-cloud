@@ -22,7 +22,7 @@ spec:
             #- "--secrets=/mnt/secret/mcp_secret"
             - "--port=8080"
             - "--transport=streaming"
-            - "--servers=home-assistant"
+            - "--servers=home-assistant,fetch"
             - "--verbose"
           env:
             - name: DOCKER_HOST
