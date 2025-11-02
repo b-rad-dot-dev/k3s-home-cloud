@@ -1,0 +1,105 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/sysadminsmedia/homebox
+  pullPolicy: IfNotPresent
+  tag: "0.21.0"
+
+env:
+  - name: TZ
+    value: "America/Los_Angeles"
+  - name: HBOX_OPTIONS_ALLOW_REGISTRATION
+    value: "false"
+  - name: HBOX_WEB_MAX_UPLOAD_SIZE
+    value: "10"
+  - name: HBOX_DATABASE_DRIVER
+    value: "postgres"
+  - name: HBOX_DATABASE_SSL_MODE
+    value: "disable"
+  - name: HBOX_DATABASE_HOST
+    valueFrom:
+      secretKeyRef:
+        name: postgres-credentials
+        key: host
+  - name: HBOX_DATABASE_DATABASE
+    valueFrom:
+      secretKeyRef:
+        name: postgres-credentials
+        key: database
+  - name: HBOX_DATABASE_PORT
+    valueFrom:
+      secretKeyRef:
+        name: postgres-credentials
+        key: port
+  - name: HBOX_DATABASE_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: postgres-credentials
+        key: username
+  - name: HBOX_DATABASE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgres-credentials
+        key: password
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 7745
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+  hosts:
+    - host: homebox.b-rad.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - homebox.b-rad.dev
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+volumes: []
+
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

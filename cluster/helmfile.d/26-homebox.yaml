@@ -1,0 +1,4 @@
+releases:
+  - name: homebox
+    namespace: homebox
+    chart: ../homebox
