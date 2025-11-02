@@ -8,6 +8,10 @@ image:
 env:
   - name: TZ
     value: "America/Los_Angeles"
+  - name: HBOX_LOG_LEVEL
+    value: "info"
+  - name: HBOX_MODE
+    value: "production"
   - name: HBOX_OPTIONS_ALLOW_REGISTRATION
     value: "false"
   - name: HBOX_WEB_MAX_UPLOAD_SIZE
