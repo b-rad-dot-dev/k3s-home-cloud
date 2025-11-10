@@ -10,3 +10,4 @@ cluster/librechat/templates/secret-librechat-credentials.yaml
 cluster/mcp-gateway/templates/secret.yaml
 cluster/n8n/templates/secret.yaml
 cluster/homebox/templates/secret.yaml
+cluster/openproject/secret.yaml

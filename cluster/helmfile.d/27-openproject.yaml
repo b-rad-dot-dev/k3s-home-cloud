@@ -1,0 +1,37 @@
+repositories:
+  - name: openproject
+    url: https://charts.openproject.org
+
+releases:
+  - name: openproject
+    namespace: openproject
+    chart: openproject/openproject
+    version: 11.4.1
+    values:
+      - appInit:
+          resources:
+            limits:
+              memory: "1Gi"
+            requests:
+              memory: "1Gi"
+      - ingress:
+          ingressClassName: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-production"
+            nginx.ingress.kubernetes.io/proxy-body-size: 200m
+          host: openproject.b-rad.dev
+      - persistence: # Need to manually do chmod -R 777 on all the auto-created volumes
+          existingClaim: openproject
+      - containerSecurityContext:
+          readOnlyRootFilesystem: false
+      - postgresql:
+          bundled: false
+          connection:
+            host: 10.0.0.15
+            port: 5432
+          auth:
+            existingSecret: "postgres-credentials"
+            secretKeys:
+              adminPasswordKey: "password"
+              userPasswordKey: "password"
+            username: openproject_user
