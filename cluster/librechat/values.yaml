@@ -6,6 +6,9 @@ librechat:
     className: nginx
     annotations:
       cert-manager.io/cluster-issuer: "letsencrypt-production"
+      forecastle.stakater.com/expose: "true"
+      forecastle.stakater.com/icon: "https://librechat.b-rad.dev/assets/logo.svg"
+      forecastle.stakater.com/group: "AI"
     hosts:
       - host: librechat.b-rad.dev
         paths:

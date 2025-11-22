@@ -30,6 +30,9 @@ ingress:
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://medusa.b-rad.dev/images/ico/favicon.ico"
+    forecastle.stakater.com/group: "Entertainment"
   hosts:
     - host: medusa.b-rad.dev
       paths:

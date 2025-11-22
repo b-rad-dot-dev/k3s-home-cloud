@@ -72,6 +72,9 @@ ingress:
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://homebox.b-rad.dev/favicon.svg"
+    forecastle.stakater.com/group: "Productivity"
   hosts:
     - host: homebox.b-rad.dev
       paths:

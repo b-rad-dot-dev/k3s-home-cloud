@@ -39,6 +39,9 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
     nginx.ingress.kubernetes.io/auth-url: https://login.b-rad.dev/authorize
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/comfy-logo-mono.svg"
+    forecastle.stakater.com/group: "AI"
   hosts:
     - host: comfyui.b-rad.dev
       paths:

@@ -45,6 +45,9 @@ ingress:
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://ntfy.b-rad.dev/static/media/ntfy-filled-93d7d911.svg"
+    forecastle.stakater.com/group: "Utilities"
   hosts:
     - host: ntfy.b-rad.dev
       paths:

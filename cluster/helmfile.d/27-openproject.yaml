@@ -19,6 +19,9 @@ releases:
           annotations:
             cert-manager.io/cluster-issuer: "letsencrypt-production"
             nginx.ingress.kubernetes.io/proxy-body-size: 200m
+            forecastle.stakater.com/expose: "true"
+            forecastle.stakater.com/icon: "https://openproject.b-rad.dev/assets/favicon-939cbdbd3b0f071269abd28ddfcb2f922d6257ce6ef70ba4941ea1708a564ab3.ico"
+            forecastle.stakater.com/group: "Productivity"
           host: openproject.b-rad.dev
       - persistence: # Need to manually do chmod -R 777 on all the auto-created volumes
           existingClaim: openproject

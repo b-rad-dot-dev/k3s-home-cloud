@@ -18,6 +18,9 @@ releases:
                 - gatus.b-rad.dev
           annotations:
             cert-manager.io/cluster-issuer: "letsencrypt-production"
+            forecastle.stakater.com/expose: "true"
+            forecastle.stakater.com/icon: "https://gatus.b-rad.dev/img/logo.svg"
+            forecastle.stakater.com/group: "Monitoring"
       - config:
           endpoints:
             - name: Emby

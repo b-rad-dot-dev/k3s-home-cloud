@@ -164,6 +164,10 @@ ui:
       cert-manager.io/cluster-issuer: "letsencrypt-production"
       nginx.ingress.kubernetes.io/use-regex: "true"
       nginx.ingress.kubernetes.io/rewrite-target: /$2
+      forecastle.stakater.com/expose: "true"
+      forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/docker-logo.svg"
+      forecastle.stakater.com/url: "https://registry.b-rad.dev/ui/"
+      forecastle.stakater.com/group: "Utilities"
     hosts:
       - host: registry.b-rad.dev
         paths:

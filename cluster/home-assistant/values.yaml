@@ -33,6 +33,9 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
     nginx.ingress.kubernetes.io/auth-url: https://login.b-rad.dev/authorize
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/home-assistant-favicon-192x192.png"
+    forecastle.stakater.com/group: "Monitoring"
   hosts:
     - host: home-assistant.b-rad.dev
       paths:

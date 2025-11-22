@@ -69,6 +69,9 @@ ingress:
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://n8n.b-rad.dev/favicon.ico"
+    forecastle.stakater.com/group: "AI"
   hosts:
     - host: n8n.b-rad.dev
       paths:

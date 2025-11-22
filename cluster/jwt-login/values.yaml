@@ -40,6 +40,9 @@ ingress:
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/login.png"
+    forecastle.stakater.com/group: "Utilities"
   hosts:
     - host: login.b-rad.dev
       paths:

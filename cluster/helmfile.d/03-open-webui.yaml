@@ -20,6 +20,9 @@ releases:
           secretName: null
           annotations:
             cert-manager.io/cluster-issuer: "letsencrypt-production"
+            forecastle.stakater.com/expose: "true"
+            forecastle.stakater.com/icon: "https://open-webui.b-rad.dev/static/splash.png"
+            forecastle.stakater.com/group: "AI"
       - extraEnvVars:
           - name: OPENAI_API_BASE_URL
             value: http://ollama.ollama:11434/v1

@@ -61,6 +61,10 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/websocket-services: "webtop"
     nginx.ingress.kubernetes.io/upgrade: "websocket"
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/webtop.png"
+    forecastle.stakater.com/url: "https://desktop.b-rad.dev/"
+    forecastle.stakater.com/group: "Productivity"
   hosts:
     - host: desktop.b-rad.dev
       paths:

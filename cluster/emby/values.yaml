@@ -34,6 +34,9 @@ ingress:
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://emby.b-rad.dev/web/modules/themes/logodark.png"
+    forecastle.stakater.com/group: "Entertainment"
   hosts:
     - host: emby.b-rad.dev
       paths:

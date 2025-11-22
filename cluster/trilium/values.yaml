@@ -35,6 +35,9 @@ ingress:
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/trilium.png"
+    forecastle.stakater.com/group: "Productivity"
   hosts:
     - host: trilium.b-rad.dev
       paths:
