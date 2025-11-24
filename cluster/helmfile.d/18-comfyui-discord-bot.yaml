@@ -4,12 +4,12 @@ releases:
     chart: ../comfyui-discord-bot
     values:
       - image:
-          tag: 0.14.0
+          tag: 0.15.0
       - env:
           - name: BOT_TYPE
             value: "PRODUCTION"
           - name: VERSION
-            value: "0.14.0"
+            value: "0.15.0"
           - name: COMFYUI_ADDRESS
             value: "comfyui-4090.default,comfyui.comfyui:8188"
           - name: COMFYUI_MODEL_CHECKPOINT_PATH
@@ -43,12 +43,12 @@ releases:
             subPath: production/workflows
       - dev:
           image:
-            tag: 20250907-104226
+            tag: 20251123-190144
           env:
             - name: BOT_TYPE
               value: "DEVELOPMENT"
             - name: VERSION
-              value: "0.15.0-SNAPSHOT"
+              value: "0.16.0-SNAPSHOT"
             - name: COMFYUI_ADDRESS
               value: "comfyui-4090.default,comfyui.comfyui:8188"
             - name: COMFYUI_MODEL_CHECKPOINT_PATH
