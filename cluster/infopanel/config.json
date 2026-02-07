@@ -1,0 +1,63 @@
+{
+  "gridWidth": 4,
+  "gridHeight": 2,
+  "modules": [
+    {
+      "name": "todo-list",
+      "width": 1,
+      "height": 2,
+      "x": 0,
+      "y": 0,
+      "config": {}
+    },
+    {
+      "name": "notes",
+      "width": 1,
+      "height": 2,
+      "x": 1,
+      "y": 0,
+      "config": {}
+    },
+    {
+      "name": "calendar",
+      "width": 1,
+      "height": 2,
+      "x": 2,
+      "y": 0,
+      "config": {
+        "icalPath": "/sample-calendar.ics",
+        "displayMode": "count",
+        "eventCount": 5
+      }
+    },
+    {
+      "name": "day-schedule",
+      "width": 1,
+      "height": 1,
+      "x": 3,
+      "y": 0,
+      "config": {
+        "schedule": [
+          {"dayOfWeek": "Monday", "data": "Chest"},
+          {"dayOfWeek": "Wednesday", "data": "Back"},
+          {"dayOfWeek": "Friday", "data": "Lower Body"},
+          {"dayOfWeek": "Monday", "data": "Shoulder"},
+          {"dayOfWeek": "Wednesday", "data": "Full Body"},
+          {"dayOfWeek": "Friday", "data": "Arms"}
+        ]
+      }
+    },
+    {
+      "name": "clock",
+      "width": 1,
+      "height": 1,
+      "x": 3,
+      "y": 1,
+      "config": {
+        "label": "Estonia",
+        "timezone": "Europe/Tallinn",
+        "timeFormat": "h:mm:ss A"
+      }
+    }
+  ]
+}

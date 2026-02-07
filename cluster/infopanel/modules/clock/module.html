@@ -1,0 +1,45 @@
+<div class="clock-container">
+    <div class="clock-label"></div>
+    <div class="clock-time"></div>
+    <div class="clock-date"></div>
+</div>
+
+<style>
+    .clock-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        padding: 8px;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .clock-label {
+        font-size: 11px;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .clock-time {
+        font-size: 24px;
+        font-weight: 700;
+        color: #4a90e2;
+        line-height: 1;
+        margin-bottom: 4px;
+        font-variant-numeric: tabular-nums;
+        text-align: center;
+    }
+
+    .clock-date {
+        font-size: 10px;
+        color: #666;
+        font-weight: 500;
+        text-align: center;
+    }
+</style>

@@ -1,0 +1,136 @@
+<div class="todo-container">
+  <input type="text" class="todo-input" placeholder="Add new task...">
+  <div class="todo-list"></div>
+</div>
+
+<style>
+  .todo-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 8px;
+  }
+
+  .todo-input {
+    flex-shrink: 0;
+  }
+
+  .todo-list {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: #2a2a2a;
+    border-radius: 3px;
+    transition: opacity 0.5s, transform 0.5s;
+    cursor: pointer;
+    font-size: 12px;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none; /* Prevent iOS callout menu */
+  }
+
+  .todo-item.completed {
+    opacity: 0.5;
+  }
+
+  .todo-item.fading {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  .todo-item.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+  }
+
+  .todo-item.drag-over {
+    border-top: 2px solid #4a90e2;
+  }
+
+  .todo-item input[type="checkbox"] {
+    width: auto;
+    cursor: pointer;
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .todo-item-text {
+    flex: 1;
+    word-wrap: break-word;
+  }
+
+  .todo-item.completed .todo-item-text {
+    text-decoration: line-through;
+    color: #888;
+  }
+
+  /* Edit mode styles */
+  .todo-item.edit-mode {
+    background: #333;
+    padding-right: 4px;
+  }
+
+  .todo-item.edit-mode input[type="checkbox"] {
+    display: none;
+  }
+
+  .drag-handle {
+    display: none;
+    cursor: grab;
+    color: #888;
+    font-size: 18px;
+    user-select: none;
+    padding: 0 8px;
+    flex-shrink: 0;
+    touch-action: none; /* Prevent default touch behaviors */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+
+  .todo-item.edit-mode .drag-handle {
+    display: block;
+  }
+
+  .drag-handle:active {
+    cursor: grabbing;
+  }
+
+  .delete-btn {
+    display: none;
+    background: #d32f2f;
+    border: none;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 3px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+
+  .todo-item.edit-mode .delete-btn {
+    display: block;
+  }
+
+  .delete-btn:hover {
+    background: #b71c1c;
+  }
+
+  .delete-btn:active {
+    background: #8b0000;
+  }
+</style>

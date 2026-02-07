@@ -1,0 +1,149 @@
+<div class="notes-container">
+  <textarea class="notes-input" placeholder="Type note and press Enter..." rows="1"></textarea>
+  <ul class="notes-list"></ul>
+</div>
+
+<style>
+  .notes-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 8px;
+  }
+
+  .notes-input {
+    flex-shrink: 0;
+    resize: none;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .notes-list {
+    flex: 1;
+    overflow: auto;
+    list-style-position: inside;
+    padding: 0;
+    margin: 0;
+  }
+
+  .notes-list li {
+    padding: 4px 0;
+    font-size: 12px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    cursor: pointer;
+    padding-left: 4px;
+    border-radius: 2px;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .notes-list li:hover {
+    background: #2a2a2a;
+  }
+
+  .notes-list li.action-mode {
+    background: #333;
+    padding: 4px;
+  }
+
+  .notes-list li.dragging {
+    opacity: 0.5;
+  }
+
+  .notes-list li.drag-over {
+    border-top: 2px solid #4a90e2;
+  }
+
+  .notes-list li.editing {
+    background: #2a2a2a;
+    outline: 1px solid #4a90e2;
+    padding: 4px;
+  }
+
+  .note-text {
+    flex: 1;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+
+  .note-drag-handle {
+    display: none;
+    cursor: grab;
+    color: #888;
+    font-size: 18px;
+    user-select: none;
+    padding: 0 4px;
+    flex-shrink: 0;
+    touch-action: none;
+    -webkit-user-select: none;
+  }
+
+  .notes-list li.action-mode .note-drag-handle {
+    display: block;
+  }
+
+  .note-edit-btn,
+  .note-delete-btn {
+    display: none;
+    border: none;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+
+  .note-edit-btn {
+    background: #4a90e2;
+  }
+
+  .note-edit-btn:hover {
+    background: #357abd;
+  }
+
+  .note-delete-btn {
+    background: #d32f2f;
+  }
+
+  .note-delete-btn:hover {
+    background: #b71c1c;
+  }
+
+  .notes-list li.action-mode .note-edit-btn,
+  .notes-list li.action-mode .note-delete-btn {
+    display: block;
+  }
+
+  .notes-list li.editing .note-drag-handle,
+  .notes-list li.editing .note-edit-btn,
+  .notes-list li.editing .note-delete-btn {
+    display: none;
+  }
+
+  .note-edit-input {
+    width: 100%;
+    background: #2a2a2a;
+    border: 1px solid #4a90e2;
+    color: inherit;
+    font: inherit;
+    padding: 4px 6px;
+    outline: none;
+    white-space: pre-wrap;
+    resize: none;
+    overflow: hidden;
+    border-radius: 3px;
+  }
+</style>
