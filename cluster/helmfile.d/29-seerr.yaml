@@ -1,0 +1,25 @@
+releases:
+  - name: seerr
+    namespace: seerr
+    chart: oci://ghcr.io/seerr-team/seerr/seerr-chart
+    version: 3.1.0
+    values:
+      - config:
+          persistence:
+            storageClass: nfs-csi
+      - ingress:
+          enabled: true
+          ingressClassName: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-production"
+            forecastle.stakater.com/expose: "true"
+            forecastle.stakater.com/icon: "https://seerr.b-rad.dev/favicon-32x32.png"
+            forecastle.stakater.com/group: "Entertainment"
+          hosts:
+            - host: seerr.b-rad.dev
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
+          tls:
+            - hosts:
+                - seerr.b-rad.dev
