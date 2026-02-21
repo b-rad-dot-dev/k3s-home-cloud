@@ -1,7 +1,25 @@
+vpn:
+  image:
+    repository: qmcgaw/gluetun
+    tag: v3.41
+  env:
+    - name: VPN_SERVICE_PROVIDER
+      value: "custom"
+    - name: VPN_TYPE
+      value: "wireguard"
+    - name: FIREWALL
+      value: "on"
+    - name: TZ
+      value: "America/Los_Angeles"
+  volumeMounts:
+    - name: gluetun-config
+      mountPath: /gluetun
+
+
 image:
-  repository: hotio/qbittorrent
+  repository: ghcr.io/hotio/qbittorrent
   pullPolicy: IfNotPresent
-  tag: release-4.6.2
+  tag: release-5.1.4
 
 serviceAccount:
   create: true
@@ -81,6 +99,9 @@ volumes:
   - name: downloads
     persistentVolumeClaim:
       claimName: emby-downloads
+  - name: gluetun-config
+    persistentVolumeClaim:
+      claimName: gluetun-config
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
