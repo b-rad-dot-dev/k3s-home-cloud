@@ -1,0 +1,4 @@
+releases:
+  - name: arr
+    namespace: arr
+    chart: ../arr

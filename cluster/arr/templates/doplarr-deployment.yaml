@@ -1,0 +1,84 @@
+{{- if .Values.doplarr.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "doplarr.fullname" . }}
+  labels:
+    {{- include "doplarr.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.doplarr.autoscaling.enabled }}
+  replicas: {{ .Values.doplarr.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "doplarr.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.doplarr.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "doplarr.labels" . | nindent 8 }}
+        {{- with .Values.doplarr.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.doplarr.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "doplarr.serviceAccountName" . }}
+      {{- with .Values.doplarr.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.doplarr.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.doplarr.image.repository }}:{{ .Values.doplarr.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.doplarr.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.doplarr.service.port }}
+              protocol: TCP
+          {{- with .Values.doplarr.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.doplarr.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.doplarr.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.doplarr.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.doplarr.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.doplarr.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.doplarr.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.doplarr.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.doplarr.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

@@ -1,0 +1,190 @@
+doplarr:
+  enabled: false
+  nameOverride: doplarr
+  replicaCount: 1
+  image:
+    repository: ghcr.io/hotio/doplarr
+    pullPolicy: IfNotPresent
+    tag: release-3.7.0
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext: {}
+  securityContext: {}
+  serviceAccount:
+    create: true
+    automount: true
+    annotations: { }
+    name: ""
+  service:
+    type: ClusterIP
+    port: 80
+  resources: {}
+  volumes:
+    - name: config
+      persistentVolumeClaim:
+        claimName: doplarr-config
+  volumeMounts:
+    - name: config
+      mountPath: /config
+  env:
+    - name: TZ
+      value: "America/Los_Angeles"
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+    - name: UMASK
+      value: "002"
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+radarr:
+  nameOverride: radarr
+  replicaCount: 1
+  image:
+    repository: ghcr.io/hotio/radarr
+    pullPolicy: IfNotPresent
+    tag: release-6.0.4.10291
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext: {}
+  securityContext: {}
+  serviceAccount:
+    create: true
+    automount: true
+    annotations: { }
+    name: ""
+  service:
+    type: ClusterIP
+    port: 7878
+  resources: {}
+  volumes:
+    - name: config
+      persistentVolumeClaim:
+        claimName: radarr-config
+    - name: downloads
+      persistentVolumeClaim:
+        claimName: emby-downloads
+    - name: movies-01
+      persistentVolumeClaim:
+        claimName: emby-movies-01
+  volumeMounts:
+    - name: config
+      mountPath: /config
+    - name: downloads
+      mountPath: /data/downloads
+    - name: movies-01
+      mountPath: /data/movies
+  env:
+    - name: TZ
+      value: "America/Los_Angeles"
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+    - name: UMASK
+      value: "002"
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-production"
+      forecastle.stakater.com/expose: "true"
+#      forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/login.png"
+      forecastle.stakater.com/group: "Utilities"
+    hosts:
+      - host: radarr.b-rad.dev
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - hosts:
+          - radarr.b-rad.dev
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+sonarr:
+  nameOverride: sonarr
+  replicaCount: 1
+  image:
+    repository: ghcr.io/hotio/sonarr
+    pullPolicy: IfNotPresent
+    tag: release-4.0.16.2944
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext: {}
+  securityContext: {}
+  serviceAccount:
+    create: true
+    automount: true
+    annotations: { }
+    name: ""
+  service:
+    type: ClusterIP
+    port: 8989
+  resources: {}
+  volumes:
+    - name: config
+      persistentVolumeClaim:
+        claimName: sonarr-config
+    - name: downloads
+      persistentVolumeClaim:
+        claimName: emby-downloads
+    - name: shows-01
+      persistentVolumeClaim:
+        claimName: emby-shows-01
+  volumeMounts:
+    - name: config
+      mountPath: /config
+    - name: downloads
+      mountPath: /data/downloads
+    - name: shows-01
+      mountPath: /data/tvshows
+  env:
+    - name: TZ
+      value: "America/Los_Angeles"
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+    - name: UMASK
+      value: "002"
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-production"
+      forecastle.stakater.com/expose: "true"
+#      forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/login.png"
+      forecastle.stakater.com/group: "Utilities"
+    hosts:
+      - host: sonarr.b-rad.dev
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - hosts:
+          - sonarr.b-rad.dev
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
