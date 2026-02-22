@@ -45,6 +45,68 @@ doplarr:
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
 
+prowlarr:
+  nameOverride: prowlarr
+  replicaCount: 1
+  image:
+    repository: ghcr.io/hotio/prowlarr
+    pullPolicy: IfNotPresent
+    tag: release-2.3.0.5236
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext: {}
+  securityContext: {}
+  serviceAccount:
+    create: true
+    automount: true
+    annotations: { }
+    name: ""
+  service:
+    type: ClusterIP
+    port: 9696
+  resources: {}
+  volumes:
+    - name: config
+      persistentVolumeClaim:
+        claimName: prowlarr-config
+  volumeMounts:
+    - name: config
+      mountPath: /config
+  env:
+    - name: TZ
+      value: "America/Los_Angeles"
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+    - name: UMASK
+      value: "002"
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-production"
+      forecastle.stakater.com/expose: "true"
+      #      forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/login.png"
+      forecastle.stakater.com/group: "Utilities"
+    hosts:
+      - host: prowlarr.b-rad.dev
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - hosts:
+          - prowlarr.b-rad.dev
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
 radarr:
   nameOverride: radarr
   replicaCount: 1

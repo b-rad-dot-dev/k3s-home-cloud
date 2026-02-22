@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "prowlarr.fullname" . }}
+  labels:
+    {{- include "prowlarr.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.prowlarr.autoscaling.enabled }}
+  replicas: {{ .Values.prowlarr.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "prowlarr.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.prowlarr.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "prowlarr.labels" . | nindent 8 }}
+        {{- with .Values.prowlarr.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.prowlarr.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "prowlarr.serviceAccountName" . }}
+      {{- with .Values.prowlarr.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.prowlarr.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.prowlarr.image.repository }}:{{ .Values.prowlarr.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.prowlarr.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.prowlarr.service.port }}
+              protocol: TCP
+          {{- with .Values.prowlarr.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.prowlarr.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.prowlarr.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.prowlarr.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.prowlarr.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.prowlarr.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.prowlarr.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.prowlarr.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.prowlarr.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

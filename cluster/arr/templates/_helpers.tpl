@@ -133,15 +133,15 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{/* ****************************************** */}}
 
-{{- define "arr.name" -}}
-{{- default .Chart.Name .Values.arr.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- define "prowlarr.name" -}}
+{{- default .Chart.Name .Values.prowlarr.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{- define "arr.fullname" -}}
-{{- if .Values.arr.fullnameOverride }}
-{{- .Values.arr.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- define "prowlarr.fullname" -}}
+{{- if .Values.prowlarr.fullnameOverride }}
+{{- .Values.prowlarr.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.arr.nameOverride }}
+{{- $name := default .Chart.Name .Values.prowlarr.nameOverride }}
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -150,28 +150,73 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 {{- end }}
 
-{{- define "arr.chart" -}}
+{{- define "prowlarr.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{- define "arr.labels" -}}
-helm.sh/chart: {{ include "arr.chart" . }}
-{{ include "arr.selectorLabels" . }}
+{{- define "prowlarr.labels" -}}
+helm.sh/chart: {{ include "prowlarr.chart" . }}
+{{ include "prowlarr.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
-{{- define "arr.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "arr.name" . }}
+{{- define "prowlarr.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "prowlarr.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{- define "arr.serviceAccountName" -}}
-{{- if .Values.arr.serviceAccount.create }}
-{{- default (include "arr.fullname" .) .Values.arr.serviceAccount.name }}
+{{- define "prowlarr.serviceAccountName" -}}
+{{- if .Values.prowlarr.serviceAccount.create }}
+{{- default (include "prowlarr.fullname" .) .Values.prowlarr.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.arr.serviceAccount.name }}
+{{- default "default" .Values.prowlarr.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+{{/* ****************************************** */}}
+
+{{- define "replaceme.name" -}}
+{{- default .Chart.Name .Values.replaceme.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "replaceme.fullname" -}}
+{{- if .Values.replaceme.fullnameOverride }}
+{{- .Values.replaceme.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- $name := default .Chart.Name .Values.replaceme.nameOverride }}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "replaceme.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "replaceme.labels" -}}
+helm.sh/chart: {{ include "replaceme.chart" . }}
+{{ include "replaceme.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{- define "replaceme.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "replaceme.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{- define "replaceme.serviceAccountName" -}}
+{{- if .Values.replaceme.serviceAccount.create }}
+{{- default (include "replaceme.fullname" .) .Values.replaceme.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.replaceme.serviceAccount.name }}
 {{- end }}
 {{- end }}
