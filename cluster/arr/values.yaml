@@ -250,3 +250,56 @@ sonarr:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
+
+flareSolverr:
+  nameOverride: flaresolverr
+  replicaCount: 1
+  image:
+    repository: ghcr.io/flaresolverr/flaresolverr
+    pullPolicy: IfNotPresent
+    tag: v3.4.6
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext: {}
+  securityContext: {}
+  serviceAccount:
+    create: true
+    automount: true
+    annotations: { }
+    name: ""
+  service:
+    type: ClusterIP
+    port: 8191
+  resources: {}
+  volumes: []
+  volumeMounts: []
+  env:
+    - name: TZ
+      value: "America/Los_Angeles"
+    - name: LOG_LEVEL
+      value: "info"
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  ingress:
+    enabled: false
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-production"
+      forecastle.stakater.com/expose: "true"
+#      forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/login.png"
+      forecastle.stakater.com/group: "Utilities"
+    hosts:
+      - host: sonarr.b-rad.dev
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - hosts:
+          - sonarr.b-rad.dev
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80

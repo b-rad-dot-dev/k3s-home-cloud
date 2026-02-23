@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "flareSolverr.fullname" . }}
+  labels:
+    {{- include "flareSolverr.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.flareSolverr.autoscaling.enabled }}
+  replicas: {{ .Values.flareSolverr.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "flareSolverr.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.flareSolverr.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "flareSolverr.labels" . | nindent 8 }}
+        {{- with .Values.flareSolverr.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.flareSolverr.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "flareSolverr.serviceAccountName" . }}
+      {{- with .Values.flareSolverr.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.flareSolverr.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.flareSolverr.image.repository }}:{{ .Values.flareSolverr.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.flareSolverr.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.flareSolverr.service.port }}
+              protocol: TCP
+          {{- with .Values.flareSolverr.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.flareSolverr.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.flareSolverr.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.flareSolverr.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.flareSolverr.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.flareSolverr.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.flareSolverr.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.flareSolverr.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.flareSolverr.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

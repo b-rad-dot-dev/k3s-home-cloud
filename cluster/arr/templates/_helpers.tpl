@@ -178,6 +178,51 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{/* ****************************************** */}}
 
+{{- define "flareSolverr.name" -}}
+{{- default .Chart.Name .Values.flareSolverr.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "flareSolverr.fullname" -}}
+{{- if .Values.flareSolverr.fullnameOverride }}
+{{- .Values.flareSolverr.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- $name := default .Chart.Name .Values.flareSolverr.nameOverride }}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "flareSolverr.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "flareSolverr.labels" -}}
+helm.sh/chart: {{ include "flareSolverr.chart" . }}
+{{ include "flareSolverr.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{- define "flareSolverr.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "flareSolverr.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{- define "flareSolverr.serviceAccountName" -}}
+{{- if .Values.flareSolverr.serviceAccount.create }}
+{{- default (include "flareSolverr.fullname" .) .Values.flareSolverr.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.flareSolverr.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+{{/* ****************************************** */}}
+
 {{- define "replaceme.name" -}}
 {{- default .Chart.Name .Values.replaceme.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}

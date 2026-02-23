@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "flareSolverr.fullname" . }}
+  labels:
+    {{- include "flareSolverr.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.flareSolverr.service.type }}
+  ports:
+    - port: {{ .Values.flareSolverr.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "flareSolverr.selectorLabels" . | nindent 4 }}
