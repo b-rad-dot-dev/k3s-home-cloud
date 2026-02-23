@@ -26,7 +26,7 @@ env:
     value: "1000"
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
   port: 8096
 
 ingress:

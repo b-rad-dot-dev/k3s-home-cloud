@@ -11,6 +11,8 @@ vpn:
       value: "on"
     - name: TZ
       value: "America/Los_Angeles"
+    - name: FIREWALL_OUTBOUND_SUBNETS
+      value: "10.42.0.0/16,10.43.0.0/16"
   volumeMounts:
     - name: gluetun-config
       mountPath: /gluetun
