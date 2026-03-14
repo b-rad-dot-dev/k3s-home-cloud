@@ -85,6 +85,8 @@ spec:
           volumeMounts:
             - name: docker-certs
               mountPath: /certs
+            - name: user-data
+              mountPath: /config
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
