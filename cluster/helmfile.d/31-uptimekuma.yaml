@@ -1,0 +1,4 @@
+releases:
+  - name: uptimekuma
+    namespace: uptimekuma
+    chart: ../uptimekuma
