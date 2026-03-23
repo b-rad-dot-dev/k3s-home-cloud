@@ -7,6 +7,8 @@ echo "------------------------------------------------"
 apt-get update && \
 apt-get install -y --no-install-recommends \
   gnome-terminal \
+  markdownpart \
   meld \
   nano \
+  postgresql-client \
   wget
