@@ -7,6 +7,7 @@ cluster/jwt-login/docker/jwt-login/bin/
 cluster/jwt-secret.txt
 cluster/4090/docker-compose.yml
 cluster/librechat/templates/secret-librechat-credentials.yaml
+cluster/linkwarden/templates/secret.yaml
 cluster/mcp-gateway/templates/secret.yaml
 cluster/n8n/templates/secret.yaml
 cluster/homebox/templates/secret.yaml
