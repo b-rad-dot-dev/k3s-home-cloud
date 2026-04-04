@@ -118,5 +118,5 @@
 
     - name: Install k3s
       ansible.builtin.shell:
-        cmd: "INSTALL_K3S_EXEC='{{ 'agent' if hostvars[inventory_hostname].agent == True else 'server' }}' sh /tmp/k3s-install.sh"
+        cmd: "INSTALL_K3S_VERSION=v1.35.3+k3s1 INSTALL_K3S_EXEC='{{ 'agent' if hostvars[inventory_hostname].agent == True else 'server' }}' sh /tmp/k3s-install.sh"
       when: ansible_facts.services.get(k3s_service_name, {}).get("state") != "running"
