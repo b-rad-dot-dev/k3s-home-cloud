@@ -1,0 +1,4 @@
+releases:
+  - name: mosquitto
+    namespace: mosquitto
+    chart: ../mosquitto

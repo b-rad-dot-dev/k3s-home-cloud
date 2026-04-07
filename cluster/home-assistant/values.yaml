@@ -1,7 +1,8 @@
 image:
   repository: ghcr.io/home-assistant/home-assistant
   pullPolicy: IfNotPresent
-  tag: stable
+  tag: 2026.4.1
+  # tag: 2025.7.2
 
 serviceAccount:
   create: true
