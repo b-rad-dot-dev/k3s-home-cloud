@@ -1,0 +1,4 @@
+releases:
+  - name: md-to-pdf
+    namespace: md-to-pdf
+    chart: ../md-to-pdf/helm
