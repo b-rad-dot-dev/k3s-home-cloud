@@ -27,6 +27,8 @@ env:
     value: "1"
   - name: DOCKER_CERT_PATH
     value: "/certs/client"
+  - name: OPENCODE_CONFIG_DIR
+    value: "/opencode/config"
 
 imagePullSecrets:
   - name: registry-credentials
@@ -107,6 +109,9 @@ volumes:
       claimName: webtop
   - name: docker-certs
     emptyDir: {}
+  - name: opencode-storage
+    persistentVolumeClaim:
+      claimName: webtop-opencode-storage
 
 volumeMounts:
   - name: user-data
@@ -114,9 +119,19 @@ volumeMounts:
   - name: docker-certs
     mountPath: /certs/client
     subPath: client
+  - name: opencode-storage
+    mountPath: /opencode
 
 nodeSelector: {}
 
 tolerations: []
 
-affinity: {}
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - linux-server

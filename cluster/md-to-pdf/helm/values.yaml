@@ -1,0 +1,72 @@
+﻿# Default values for md-to-pdf.
+
+replicaCount: 1
+
+image:
+  repository: registry.b-rad.dev:443/md-to-pdf
+  pullPolicy: IfNotPresent
+  tag: "20260418-160056"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    nginx.ingress.kubernetes.io/auth-url: https://login.b-rad.dev/authorize
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/webtop.png"
+    forecastle.stakater.com/url: "https://md-to-pdf.b-rad.dev/"
+    forecastle.stakater.com/group: "Productivity"
+  hosts:
+    - host: md-to-pdf.b-rad.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - md-to-pdf.b-rad.dev
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env: []
+# - name: NODE_ENV
+#   value: "production"
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5

@@ -1,0 +1,6 @@
+﻿apiVersion: v2
+name: md-to-pdf
+description: A Helm chart for deploying a Markdown to PDF converter web application
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

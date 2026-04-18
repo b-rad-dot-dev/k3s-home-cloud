@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown to PDF Converter</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background-color: #0d1117;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #e6edf3;
+      margin-bottom: 30px;
+    }
+
+    .input-section {
+      background: #161b22;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      margin-bottom: 20px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      border: none;
+      background: #21262d;
+      color: #8b949e;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 6px 6px 0 0;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      background: #30363d;
+    }
+
+    .tab-btn.active {
+      background: #161b22;
+      color: #58a6ff;
+      font-weight: 500;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      padding: 15px;
+      border: 2px solid #30363d;
+      border-radius: 6px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 14px;
+      resize: vertical;
+      background: #0d1117;
+      color: #e6edf3;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #58a6ff;
+    }
+
+    .upload-area {
+      border: 2px dashed #30363d;
+      border-radius: 6px;
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #0d1117;
+    }
+
+    .upload-area:hover {
+      border-color: #58a6ff;
+      background: #161b22;
+    }
+
+    .upload-area.dragover {
+      border-color: #58a6ff;
+      background: #1c2128;
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .upload-text {
+      color: #8b949e;
+      margin-bottom: 10px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .filename {
+      color: #58a6ff;
+      font-weight: 500;
+    }
+
+    .convert-btn {
+      width: 100%;
+      padding: 14px;
+      background: #58a6ff;
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background 0.2s;
+    }
+
+    .convert-btn:hover:not(:disabled) {
+      background: #79b8ff;
+    }
+
+    .convert-btn:disabled {
+      background: #30363d;
+      color: #484f58;
+      cursor: not-allowed;
+    }
+
+    .output-section {
+      display: none;
+    }
+
+    .output-section.visible {
+      display: block;
+    }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .output-title {
+      font-size: 18px;
+      color: #e6edf3;
+    }
+
+    .download-btn {
+      padding: 10px 20px;
+      background: #40c057;
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .download-btn:hover {
+      background: #5dd77a;
+    }
+
+    .pdf-container {
+      background: #161b22;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      min-height: 400px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      background: #0d1117;
+    }
+
+    .error-message {
+      background: #401a1a;
+      color: #f8b2b2;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .error-message.visible {
+      display: block;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #8b949e;
+    }
+
+    .spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid #30363d;
+      border-top-color: #58a6ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Markdown to PDF Converter</h1>
+    
+    <div class="input-section">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="paste">Paste Markdown</button>
+        <button class="tab-btn" data-tab="upload">Upload File</button>
+      </div>
+
+      <div id="paste-content" class="tab-content active">
+        <textarea id="markdown-input" placeholder="Paste your Markdown content here...
+
+# Example
+
+This is a **bold** text and this is *italic*.
+
+- List item 1
+- List item 2
+- List item 3"></textarea>
+      </div>
+
+      <div id="upload-content" class="tab-content">
+        <div class="upload-area" id="drop-zone">
+          <div class="upload-icon">📄</div>
+          <p class="upload-text">Drag and drop a .md file here, or click to browse</p>
+          <input type="file" id="file-input" class="file-input" accept=".md,.markdown">
+        </div>
+        <p id="selected-file" style="text-align: center; margin-top: 15px;"></p>
+      </div>
+
+      <button class="convert-btn" id="convert-btn">Convert to PDF</button>
+      <div class="error-message" id="error-message"></div>
+    </div>
+
+    <div class="output-section" id="output-section">
+      <div class="output-header">
+        <span class="output-title">PDF Preview:</span>
+        <button class="download-btn" id="download-btn">Download PDF</button>
+      </div>
+      <div class="pdf-container">
+        <iframe id="pdf-frame"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(`${btn.dataset.tab}-content`).classList.add('active');
+      });
+    });
+
+    // Upload area functionality
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const selectedFileText = document.getElementById('selected-file');
+    let uploadedFileContent = null;
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      handleFile(file);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      handleFile(e.target.files[0]);
+    });
+
+    function handleFile(file) {
+      if (!file || !file.name.endsWith('.md')) {
+        showError('Please select a valid .md file');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        uploadedFileContent = e.target.result;
+        selectedFileText.innerHTML = `<span class="filename">${file.name}</span> selected`;
+        hideError();
+      };
+      reader.readAsText(file);
+    }
+
+    // Convert button click
+    document.getElementById('convert-btn').addEventListener('click', async () => {
+      const markdownContent = getMarkdownContent();
+      
+      if (!markdownContent || markdownContent.trim() === '') {
+        showError('Please enter or upload some Markdown content');
+        return;
+      }
+
+      // Show loading state
+      showLoading();
+      hideError();
+      document.getElementById('output-section').classList.remove('visible');
+
+      try {
+        const response = await fetch('/api/convert', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ markdown: markdownContent })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Conversion failed');
+        }
+
+        displayPdf(result.data, result.mimeType);
+      } catch (error) {
+        showError(error.message);
+      }
+    });
+
+    function getMarkdownContent() {
+      const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+      if (activeTab === 'paste') {
+        return document.getElementById('markdown-input').value;
+      } else {
+        return uploadedFileContent || '';
+      }
+    }
+
+    function displayPdf(base64Data, mimeType) {
+      const blob = base64ToBlob(base64Data, mimeType);
+      const url = URL.createObjectURL(blob);
+      document.getElementById('pdf-frame').src = url;
+      document.getElementById('output-section').classList.add('visible');
+      hideLoading();
+    }
+
+    function base64ToBlob(base64, mimeType) {
+      const binaryString = atob(base64);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      return new Blob([bytes], { type: mimeType });
+    }
+
+    // Download button
+    document.getElementById('download-btn').addEventListener('click', () => {
+      const iframe = document.getElementById('pdf-frame');
+      if (iframe.src) {
+        const link = document.createElement('a');
+        link.href = iframe.src;
+        link.download = 'converted-document.pdf';
+        link.click();
+      }
+    });
+
+    // Error handling
+    function showError(message) {
+      const errorEl = document.getElementById('error-message');
+      errorEl.textContent = message;
+      errorEl.classList.add('visible');
+    }
+
+    function hideError() {
+      document.getElementById('error-message').classList.remove('visible');
+    }
+
+    // Loading state
+    function showLoading() {
+      const btn = document.getElementById('convert-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> Converting...';
+    }
+
+    function hideLoading() {
+      const btn = document.getElementById('convert-btn');
+      btn.disabled = false;
+      btn.textContent = 'Convert to PDF';
+    }
+  </script>
+</body>
+</html>

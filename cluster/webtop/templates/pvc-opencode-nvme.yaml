@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: webtop-opencode-storage
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  persistentVolumeReclaimPolicy: Retain  # Overrides StorageClass default of "Delete"
+  hostPath:
+    path: /home/brad/opencode
+    type: Directory
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - linux-server
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: webtop-opencode-storage
+  namespace: webtop
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: local-path
+  volumeName: webtop-opencode-storage  # Static binding to specific PV

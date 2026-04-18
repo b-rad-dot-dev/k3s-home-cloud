@@ -13,7 +13,7 @@ releases:
       - persistence:
           storageClass: nfs-csi
       - ingress:
-          enabled: true
+          enabled: false #TODO: Manually apply the ingress so it doesn't try to use/create a secret
           class: nginx
           host: open-webui.b-rad.dev
           tls: true
