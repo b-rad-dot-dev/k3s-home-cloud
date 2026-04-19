@@ -9,6 +9,7 @@ COPY src/index.html ./
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    fonts-noto-color-emoji \
     chromium && \
     npm i && \
     npx puppeteer browsers install && \

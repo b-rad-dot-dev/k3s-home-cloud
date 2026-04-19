@@ -5,7 +5,7 @@ replicaCount: 1
 image:
   repository: registry.b-rad.dev:443/md-to-pdf
   pullPolicy: IfNotPresent
-  tag: "20260418-160056"
+  tag: "20260419-134757"
 
 imagePullSecrets:
   - name: registry-credentials
