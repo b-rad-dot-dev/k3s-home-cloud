@@ -1,0 +1,148 @@
+from flask import Flask, render_template, request, jsonify
+import subprocess
+import json
+import re
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/api/printer-info', methods=['GET'])
+def get_printer_info():
+    """Get information about the connected P-Touch printer and tape."""
+    try:
+        result = subprocess.run(
+            ['ptouch-print', '--info'],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+
+        if result.returncode == 0:
+            return jsonify({
+                'success': True,
+                'info': result.stdout
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': result.stderr or 'Failed to get printer info'
+            }), 500
+    except subprocess.TimeoutExpired:
+        return jsonify({
+            'success': False,
+            'error': 'Command timed out'
+        }), 500
+    except FileNotFoundError:
+        return jsonify({
+            'success': False,
+            'error': 'ptouch-print command not found. Please ensure it is installed.'
+        }), 500
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/print', methods=['POST'])
+def print_label():
+    """Print a label based on the provided configuration."""
+    try:
+        data = request.get_json()
+        labels = data.get('labels', [])
+
+        if not labels:
+            return jsonify({
+                'success': False,
+                'error': 'No labels provided'
+            }), 400
+
+        # Build the ptouch-print command
+        cmd = ['ptouch-print']
+
+        # TODO: If multiple labels, give option to print all at once (no cut), or print one at a time (with cut)
+
+        for i, label in enumerate(labels):
+            text = label.get('text', '')
+            if not text:
+                continue
+
+            font_name = label.get('font', 'DejaVu Sans')
+            font_size = label.get('fontSize', 24)
+            bold = label.get('bold', False)
+            italic = label.get('italic', False)
+            underline = label.get('underline', False)
+            strikethrough = label.get('strikethrough', False)
+
+            # Build font string with decorations
+            font_str = font_name
+            if bold:
+                font_str += ':bold'
+            if italic:
+                font_str += ':italic'
+            if underline:
+                font_str += ':underline'
+            if strikethrough:
+                font_str += ':strikethrough'
+
+            # Add font and fontsize
+            cmd.extend(['--font', font_str])
+            cmd.extend(['--fontsize', str(font_size)])
+
+            # Add padding so first part of first letter doesn't get cut off
+            cmd.extend(['--pad', '10'])
+            # Add precut for whenever it works
+            cmd.append('--precut')
+
+            # Add text
+            cmd.extend(['--text', text])
+
+            # Add cutmark if specified
+            if label.get('cutmark', False):
+                cmd.append('--cutmark')
+
+            cmd.append('--debug')
+
+        # Execute the command
+        logger.info(f"Sending: {' '.join(cmd)}")
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        if result.returncode == 0:
+            logger.info(f"Success output:\n{result.stdout}")
+            return jsonify({
+                'success': True,
+                'message': 'Label printed successfully',
+                'output': result.stdout
+            })
+        else:
+            logger.info(f"Error output:\n{result.stdout}\n\n{result.stderr or 'Print command failed'}")
+            return jsonify({
+                'success': False,
+                'error': result.stderr or 'Print command failed',
+                'output': result.stdout
+            }), 500
+
+    except subprocess.TimeoutExpired:
+        return jsonify({
+            'success': False,
+            'error': 'Print command timed out'
+        }), 500
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=False)

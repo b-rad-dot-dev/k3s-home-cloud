@@ -1,0 +1,4 @@
+releases:
+  - name: labeler
+    namespace: labeler
+    chart: ../labeler
