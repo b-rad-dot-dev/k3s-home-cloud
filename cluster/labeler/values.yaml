@@ -118,6 +118,14 @@ volumes:
   - name: usb
     hostPath:
       path: /dev/bus/usb
+  - name: app-config
+    configMap:
+      name: app
+      defaultMode: 0644
+  - name: templates-config
+    configMap:
+      name: index
+      defaultMode: 0644
 # - name: foo
 #   secret:
 #     secretName: mysecret
@@ -127,6 +135,12 @@ volumes:
 volumeMounts:
   - name: usb
     mountPath: /dev/bus/usb
+  - name: app-config
+    mountPath: /app/app.py
+    subPath: app.py
+  - name: templates-config
+    mountPath: /app/templates/index.html
+    subPath: index.html
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true

@@ -25,8 +25,8 @@ RUN git clone https://git.familie-radermacher.ch/linux/ptouch-print.git && \
 WORKDIR /app
 
 # Copy application files
-COPY app.py /app/
-COPY templates /app/templates/
+#COPY app.py /app/
+#COPY templates /app/templates/
 
 # Install Python dependencies
 RUN pip install --no-cache-dir flask gunicorn

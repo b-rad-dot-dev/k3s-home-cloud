@@ -13,8 +13,11 @@ spec:
       {{- include "labeler.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        # Trigger rolling restart when ConfigMaps change
+        checksum/configmap-app: {{ include (print $.Template.BasePath "/configmap-app.py.yaml") . | sha256sum }}
+        checksum/configmap-index: {{ include (print $.Template.BasePath "/configmap-index.html.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:

@@ -1,0 +1,521 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: index
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>P-Touch Label Maker</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
+            }
+
+            .container {
+                max-width: 900px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                overflow: hidden;
+            }
+
+            .header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 30px;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 2em;
+                margin-bottom: 10px;
+            }
+
+            .content {
+                padding: 30px;
+            }
+
+            .info-section {
+                background: #f8f9fa;
+                border: 2px solid #e9ecef;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+
+            .info-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+
+            .info-header h2 {
+                color: #495057;
+                font-size: 1.3em;
+            }
+
+            .refresh-btn {
+                background: #667eea;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 0.9em;
+                transition: background 0.3s;
+            }
+
+            .refresh-btn:hover {
+                background: #5568d3;
+            }
+
+            .printer-info {
+                background: white;
+                padding: 15px;
+                border-radius: 6px;
+                font-family: 'Courier New', monospace;
+                white-space: pre-wrap;
+                font-size: 0.9em;
+                color: #212529;
+                max-height: 200px;
+                overflow-y: auto;
+            }
+
+            .label-item {
+                background: #f8f9fa;
+                border: 2px solid #dee2e6;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 20px;
+                position: relative;
+            }
+
+            .label-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+
+            .label-title {
+                font-size: 1.2em;
+                font-weight: bold;
+                color: #495057;
+            }
+
+            .remove-btn {
+                background: #dc3545;
+                color: white;
+                border: none;
+                padding: 6px 12px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 0.85em;
+            }
+
+            .remove-btn:hover {
+                background: #c82333;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                color: #495057;
+            }
+
+            input[type="text"],
+            textarea,
+            select,
+            input[type="number"] {
+                width: 100%;
+                padding: 10px;
+                border: 2px solid #dee2e6;
+                border-radius: 6px;
+                font-size: 1em;
+                transition: border-color 0.3s;
+            }
+
+            input[type="text"]:focus,
+            textarea:focus,
+            select:focus,
+            input[type="number"]:focus {
+                outline: none;
+                border-color: #667eea;
+            }
+
+            textarea {
+                resize: vertical;
+                min-height: 80px;
+                font-family: inherit;
+            }
+
+            .form-row {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 15px;
+            }
+
+            .checkbox-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .checkbox-item {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .checkbox-item input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+
+            .checkbox-item label {
+                margin: 0;
+                font-weight: normal;
+                cursor: pointer;
+            }
+
+            .cutmark-option {
+                margin-top: 15px;
+                padding: 15px;
+                background: #fff3cd;
+                border: 2px solid #ffc107;
+                border-radius: 6px;
+            }
+
+            .button-group {
+                display: flex;
+                gap: 15px;
+                margin-top: 30px;
+            }
+
+            .btn {
+                flex: 1;
+                padding: 15px;
+                border: none;
+                border-radius: 8px;
+                font-size: 1.1em;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-primary {
+                background: #28a745;
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background: #218838;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            }
+
+            .btn-secondary {
+                background: #667eea;
+                color: white;
+            }
+
+            .btn-secondary:hover {
+                background: #5568d3;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+
+            .alert {
+                padding: 15px;
+                border-radius: 6px;
+                margin-bottom: 20px;
+                display: none;
+            }
+
+            .alert-success {
+                background: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+
+            .alert-error {
+                background: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+
+            .loading {
+                display: none;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .spinner {
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #667eea;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+                margin: 0 auto;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+    </head>
+    <body>
+    <div class="container">
+        <div class="header">
+            <h1>🏷️ P-Touch Label Maker</h1>
+            <p>Create and print custom labels</p>
+        </div>
+
+        <div class="content">
+            <div class="info-section">
+                <div class="info-header">
+                    <h2>Printer Information</h2>
+                    <button class="refresh-btn" onclick="refreshPrinterInfo()">🔄 Refresh</button>
+                </div>
+                <div class="printer-info" id="printerInfo">Loading printer information...
+                </div>
+            </div>
+
+            <div id="alert" class="alert"></div>
+
+            <div id="labelsContainer"></div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="addLabel()">➕ Add Label</button>
+                <button class="btn btn-primary" onclick="printLabels()">🖨️ Print All Labels
+                </button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let labelCount = 0;
+
+        const commonFonts = [
+            'Helsinki',
+            'Brussels',
+            'US',
+            'Los Angeles',
+            'San Diego',
+            'Florida',
+            'Calgary',
+            'Belgium',
+            'Atlanta',
+            'Adams',
+            'Brunei',
+            'Sofia',
+            'Germany',
+            'Letter Gothic'
+        ];
+
+        function createLabelHTML(id) {
+            return `
+      <div class="label-item" id="label-${id}">
+      <div class="label-header">
+      <span class="label-title">Label ${id + 1}</span>
+      <button class="remove-btn" onclick="removeLabel(${id})">✕ Remove</button>
+      </div>
+
+      <div class="form-group">
+      <label>Label Text</label>
+      <textarea id="text-${id}" placeholder="Enter your label text here..."></textarea>
+      </div>
+
+      <div class="form-row">
+      <div class="form-group">
+      <label>Font</label>
+      <select id="font-${id}">
+      ${commonFonts.map(font => `<option value="${font}">${font}</option>`).join('')}
+      </select>
+      </div>
+
+      <div class="form-group">
+      <label>Font Size</label>
+      <input type="number" id="fontSize-${id}" value="18" min="6" max="72">
+      </div>
+      </div>
+
+      <div class="form-group">
+      <label>Text Style</label>
+      <div class="checkbox-group">
+      <div class="checkbox-item">
+      <input type="checkbox" id="bold-${id}">
+      <label for="bold-${id}">Bold</label>
+      </div>
+      <div class="checkbox-item">
+      <input type="checkbox" id="italic-${id}">
+      <label for="italic-${id}">Italic</label>
+      </div>
+      <div class="checkbox-item">
+      <input type="checkbox" id="underline-${id}">
+      <label for="underline-${id}">Underline</label>
+      </div>
+      <div class="checkbox-item">
+      <input type="checkbox" id="strikethrough-${id}">
+      <label for="strikethrough-${id}">Strikethrough</label>
+      </div>
+      </div>
+      </div>
+
+      <div class="cutmark-option">
+      <div class="checkbox-item">
+      <input type="checkbox" id="cutmark-${id}">
+      <label for="cutmark-${id}">✂️ Add cut mark after this label</label>
+      </div>
+      </div>
+      </div>
+      `;
+        }
+
+        function addLabel() {
+            const container = document.getElementById('labelsContainer');
+            container.insertAdjacentHTML('beforeend', createLabelHTML(labelCount));
+            labelCount++;
+        }
+
+        function removeLabel(id) {
+            const label = document.getElementById(`label-${id}`);
+            if (label) {
+                label.remove();
+            }
+        }
+
+        function getLabelData(id) {
+            const textEl = document.getElementById(`text-${id}`);
+            if (!textEl) return null;
+
+            return {
+                text: textEl.value,
+                font: document.getElementById(`font-${id}`).value,
+                fontSize: parseInt(document.getElementById(`fontSize-${id}`).value),
+                bold: document.getElementById(`bold-${id}`).checked,
+                italic: document.getElementById(`italic-${id}`).checked,
+                underline: document.getElementById(`underline-${id}`).checked,
+                strikethrough: document.getElementById(`strikethrough-${id}`).checked,
+                cutmark: document.getElementById(`cutmark-${id}`).checked
+            };
+        }
+
+        async function printLabels() {
+            const labels = [];
+            for (let i = 0; i < labelCount; i++) {
+                const data = getLabelData(i);
+                if (data && data.text.trim()) {
+                    labels.push(data);
+                }
+            }
+
+            if (labels.length === 0) {
+                showAlert('Please add at least one label with text', 'error');
+                return;
+            }
+
+            showLoading(true);
+            hideAlert();
+
+            try {
+                const response = await fetch('/api/print', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({labels})
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('Labels printed successfully! ✓', 'success');
+                } else {
+                    showAlert('Print failed: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function refreshPrinterInfo() {
+            const infoDiv = document.getElementById('printerInfo');
+            infoDiv.textContent = 'Loading...';
+
+            try {
+                const response = await fetch('/api/printer-info');
+                const result = await response.json();
+
+                if (result.success) {
+                    infoDiv.textContent = result.info || 'No information available';
+                } else {
+                    infoDiv.textContent = 'Error: ' + result.error;
+                }
+            } catch (error) {
+                infoDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+
+            setTimeout(() => {
+                hideAlert();
+            }, 5000);
+        }
+
+        function hideAlert() {
+            const alert = document.getElementById('alert');
+            alert.style.display = 'none';
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        // Initialize
+        window.onload = function () {
+            addLabel();
+            refreshPrinterInfo();
+        };
+    </script>
+    </body>
+    </html>
