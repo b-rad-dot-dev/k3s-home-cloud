@@ -1,7 +1,7 @@
 image:
   repository: linuxserver/emby
   pullPolicy: IfNotPresent
-  tag: latest
+  tag: "4.9.3.0-ls278"
 
 serviceAccount:
   create: true
