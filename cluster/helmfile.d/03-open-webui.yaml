@@ -2,16 +2,19 @@ repositories:
   - name: open-webui
     url: https://open-webui.github.io/helm-charts
 
+# https://github.com/open-webui/helm-charts/tree/main
 releases:
   - name: open-webui
     namespace: open-webui
     chart: open-webui/open-webui
-    version: 5.25.0
+    version: 14.6.0
     values:
       - ollama:
           enabled: false
       - persistence:
           storageClass: nfs-csi
+      - pipelines:
+          enabled: true
       - ingress:
           enabled: false #TODO: Manually apply the ingress so it doesn't try to use/create a secret
           class: nginx

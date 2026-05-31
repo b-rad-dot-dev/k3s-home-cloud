@@ -46,3 +46,14 @@ data:
           summaryModel: "current_model"
           forcePrompt: false
           modelDisplayLabel: "LM Studio"
+        - name: "vLLM"
+          apiKey: "vllm"
+          baseURL: "http://spark.default:8003/v1"
+          models:
+            default: ['Intel/Qwen3.6-35B-A3B-int4-mixed-AutoRound']
+            fetch: true
+          titleConvo: true
+          titleModel: "current_model"
+          titleMessageRole: "user"
+          summarize: false
+          summaryModel: "current_model"

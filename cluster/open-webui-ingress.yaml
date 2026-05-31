@@ -1,0 +1,28 @@
+# applied manually
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/icon: "https://open-webui.b-rad.dev/static/splash.png"
+    forecastle.stakater.com/group: "AI"
+  name: open-webui
+  namespace: open-webui
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: open-webui.b-rad.dev
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: open-webui
+                port:
+                  number: 80
+
+  tls:
+    - hosts:
+        - open-webui.b-rad.dev
