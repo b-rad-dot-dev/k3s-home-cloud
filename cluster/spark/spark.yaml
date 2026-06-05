@@ -15,6 +15,10 @@ ports:
     name: http2
   - port: 8003
     name: http3
+  - port: 8004
+    name: http4
+  - port: 8005
+    name: http5
 endpoints:
   - addresses:
       - 10.0.97.155
@@ -40,3 +44,9 @@ spec:
     - port: 8003
       targetPort: 8003
       name: http3
+    - port: 8004
+      targetPort: 8004
+      name: http4
+    - port: 8005
+      targetPort: 8005
+      name: http5
