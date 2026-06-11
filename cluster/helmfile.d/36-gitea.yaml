@@ -1,0 +1,49 @@
+repositories:
+  - name: gitea-charts
+    url: https://dl.gitea.com/charts/
+
+releases:
+  - name: gitea
+    namespace: gitea
+    chart: gitea-charts/gitea
+    version: 12.6.0
+    values:
+      - ingress:
+          enabled: true
+          className: nginx
+          hosts:
+            - host: gitea.b-rad.dev
+          tls:
+            - hosts:
+                - gitea.b-rad.dev
+      - service:
+          ssh:
+            type: LoadBalancer
+            externalTrafficPolicy: Local
+            port: 2222
+      - persistence:
+          enabled: true
+          storageClass: nfs-csi
+          accessModes: ["ReadWriteMany"]
+      - postgresql:
+          enabled: false
+      - postgresql-ha:
+          enabled: false
+      - gitea:
+          config:
+            database:
+              DB_TYPE: postgres
+              HOST: 10.0.0.15
+              NAME: giteadb
+              USER: gitea
+              SCHEMA: gitea
+          additionalConfigFromEnvs:
+            - name: GITEA__DATABASE__PASSWD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
+            - name: GITEA__service__DISABLE_REGISTRATION
+              value: "true"
+            - name: FOO
+              value: "bar"

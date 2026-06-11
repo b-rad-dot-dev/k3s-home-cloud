@@ -50,6 +50,9 @@ spec:
             - name: websocket
               containerPort: 8082
               protocol: TCP
+            - name: vite
+              containerPort: 5173
+              protocol: TCP
           {{- with .Values.env }}
           env:
             {{- toYaml . | nindent 12 }}
