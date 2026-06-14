@@ -11,6 +11,8 @@ releases:
       - ingress:
           enabled: true
           className: nginx
+          annotations:
+            nginx.ingress.kubernetes.io/proxy-body-size: 4G
           hosts:
             - host: gitea.b-rad.dev
           tls:
@@ -47,3 +49,19 @@ releases:
               value: "true"
             - name: FOO
               value: "bar"
+  - name: gitea-actions
+    namespace: gitea
+    chart: gitea-charts/actions
+    version: v0.1.1
+    values:
+      - enabled: true
+      - giteaRootURL: http://gitea-http:3000
+      - existingSecret: runner-secret
+      - existingSecretKey: runner-token
+      - statefulset:
+          dind:
+            tag: 29.5.2-dind
+#          runner:
+#            registry: gitea.b-rad.dev
+#            repository: brad/runner-images
+#            tag: 20260614-154415
