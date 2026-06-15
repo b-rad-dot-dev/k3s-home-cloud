@@ -1,4 +1,29 @@
 releases:
   - name: md-to-pdf
     namespace: md-to-pdf
-    chart: ../md-to-pdf/helm
+    chart:  oci://gitea.b-rad.dev/brad/helm-charts/md-to-pdf
+    version: 1.1.0
+    values:
+      - serviceAccount:
+          create: true
+      - ingress:
+          enabled: true
+          className: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-production"
+            nginx.ingress.kubernetes.io/auth-url: https://login.b-rad.dev/authorize
+            forecastle.stakater.com/expose: "true"
+            forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/webtop.png"
+            forecastle.stakater.com/url: "https://md-to-pdf.b-rad.dev/"
+            forecastle.stakater.com/group: "Productivity"
+          hosts:
+            - host: md-to-pdf.b-rad.dev
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
+          tls:
+            - hosts:
+                - md-to-pdf.b-rad.dev
+      - env:
+          - name: THEME_URL
+            value: https://b-rad.dev/css/theme.css?v=1.0.0

@@ -14,3 +14,4 @@ cluster/n8n/templates/secret.yaml
 cluster/homebox/templates/secret.yaml
 cluster/openproject/secret.yaml
 cluster/gitea-secret.yaml
+cluster/gitea-config.yaml
