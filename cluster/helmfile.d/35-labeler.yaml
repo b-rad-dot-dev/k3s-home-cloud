@@ -1,4 +1,45 @@
 releases:
   - name: labeler
     namespace: labeler
-    chart: ../labeler
+    chart: oci://gitea.b-rad.dev/brad/helm-charts/labeler
+    version: 1.0.0
+    values:
+      - securityContext:
+          privileged: true
+      - ingress:
+          enabled: true
+          className: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-production"
+            nginx.ingress.kubernetes.io/auth-url: https://login.b-rad.dev/authorize
+            forecastle.stakater.com/expose: "true"
+            forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/webtop.png"
+            forecastle.stakater.com/url: "https://labeler.b-rad.dev/"
+            forecastle.stakater.com/group: "Productivity"
+          hosts:
+            - host: labeler.b-rad.dev
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
+          tls:
+            - hosts:
+                - labeler.b-rad.dev
+      - volumes:
+          - name: usb
+            hostPath:
+              path: /dev/bus/usb
+      - volumeMounts:
+          - name: usb
+            mountPath: /dev/bus/usb
+      - nodeSelector:
+          ptouch: "true"
+      - tolerations:
+          - key: "ptouch"
+            operator: "Equal"
+            value: "true"
+            effect: "NoSchedule"
+      - env:
+          - name: THEME_URL
+            value: https://b-rad.dev/theme/1.1.0/theme.min.css
+          - name: THEME_JS_URL
+            value: https://b-rad.dev/theme/1.1.0/theme.min.js
