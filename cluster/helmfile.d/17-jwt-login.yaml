@@ -1,9 +1,53 @@
 releases:
   - name: jwt-login
     namespace: jwt-login
-    chart: ../jwt-login
+    chart: oci://gitea.b-rad.dev/brad/helm-charts/jwt-login
+    version: 1.0.0
     values:
-      - image:
-          tag: 20250428-214438
+      - ingress:
+          enabled: true
+          className: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-production"
+            forecastle.stakater.com/expose: "true"
+            forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/login.png"
+            forecastle.stakater.com/group: "Utilities"
+          hosts:
+            - host: login.b-rad.dev
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
+          tls:
+            - hosts:
+                - login.b-rad.dev
+      - env:
+        - name: DB_HOST
+          value: "10.0.0.15"
+        - name: DB_USER
+          value: "postgres"
+        - name: COOKIE_DOMAIN
+          value: "b-rad.dev"
+      - volumes:
+        - name: db-password
+          secret:
+            secretName: postgres-credentials
+            items:
+              - key: password
+                path: password
+        - name: jwt-secret
+          secret:
+            secretName: jwt-secret
+            items:
+              - key: jwt-secret
+                path: jwt-secret
+      - volumeMounts:
+        - name: db-password
+          mountPath: "/run/secrets/database.password"
+          subPath: password
+          readOnly: true
+        - name: jwt-secret
+          mountPath: "/run/secrets/jwt.secret"
+          subPath: jwt-secret
+          readOnly: true
       - nodeSelector:
           kubernetes.io/hostname: "brad-hppavilionnotebook"
