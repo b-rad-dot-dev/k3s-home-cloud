@@ -1,4 +1,96 @@
 releases:
   - name: webtop
     namespace: webtop
-    chart: ../webtop
+    chart: oci://gitea.b-rad.dev/brad/helm-charts/webtop
+    # kubectl -n webtop rollout undo deployment webtop
+    version: 1.3.2
+    values:
+      - env:
+          - name: PUID
+            value: "1001"
+          - name: PGID
+            value: "1001"
+          - name: TZ
+            value: "America/Los_Angeles"
+          - name: SUBFOLDER
+            value: "/"
+          - name: TITLE
+            value: "Desktop"
+          - name: LC_ALL
+            value: "en_US.UTF-8"
+          - name: DOCKER_HOST
+            value: "tcp://localhost:2376"
+          - name: DOCKER_TLS_VERIFY
+            value: "1"
+          - name: DOCKER_CERT_PATH
+            value: "/certs/client"
+          - name: OPENCODE_CONFIG_DIR
+            value: "/opencode/config"
+          - name: XDG_RUNTIME_DIR
+            value: "/tmp/.XDG"
+      - runtimeClassName: nvidia
+      - ingress:
+          enabled: true
+          className: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-production"
+            nginx.ingress.kubernetes.io/auth-url: https://login.b-rad.dev/authorize
+            nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+            nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+            nginx.ingress.kubernetes.io/websocket-services: "webtop"
+            nginx.ingress.kubernetes.io/upgrade: "websocket"
+            forecastle.stakater.com/expose: "true"
+            forecastle.stakater.com/icon: "https://b-rad.dev/images/icons/webtop.png"
+            forecastle.stakater.com/url: "https://desktop.b-rad.dev/"
+            forecastle.stakater.com/group: "Productivity"
+          hosts:
+            - host: desktop.b-rad.dev
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - desktop.b-rad.dev
+      - persistentVolume:
+          enabled: true
+          accessModes:
+            - ReadWriteOnce
+          size: 5Gi
+          storageClass: nfs-csi
+      - persistentOpencodeVolume:
+          enabled: true
+          hostPath: /home/brad/opencode
+          nodeAffinity:
+            required:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: In
+                      values:
+                        - linux-server
+      - volumes:
+          - name: user-data
+            persistentVolumeClaim:
+              claimName: webtop
+          - name: docker-certs
+            emptyDir: {}
+          - name: opencode-storage
+            persistentVolumeClaim:
+              claimName: webtop-opencode-storage
+      - volumeMounts:
+          - name: user-data
+            mountPath: /config
+          - name: docker-certs
+            mountPath: /certs/client
+            subPath: client
+          - name: opencode-storage
+            mountPath: /opencode
+      - affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: In
+                      values:
+                        - linux-server
