@@ -3,7 +3,8 @@ replicaCount: 1
 image:
   repository: ghcr.io/triliumnext/trilium
   pullPolicy: IfNotPresent
-  tag: "v0.99.1"
+  tag: "v0.103.0"
+#  tag: "v0.99.1"
 
 imagePullSecrets: []
 nameOverride: ""
