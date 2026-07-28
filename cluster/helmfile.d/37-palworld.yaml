@@ -2,7 +2,33 @@ releases:
   - name: palworld
     namespace: palworld
     chart: oci://gitea.b-rad.dev/brad/helm-charts/palworld
-    version: 1.1.3
+    version: 1.2.2
     values:
       - nodeSelector:
           kubernetes.io/hostname: "laxus"
+      - status:
+          enabled: true
+          ingress:
+            enabled: true
+            annotations:
+              cert-manager.io/cluster-issuer: "letsencrypt-production"
+            hosts:
+              - host: palworld.b-rad.dev
+                paths:
+                  - path: /
+                    pathType: ImplementationSpecific
+            tls:
+              - hosts:
+                  - palworld.b-rad.dev
+          env:
+            - name: THEME_URL
+              value: https://b-rad.dev/theme/1.3.0/theme.min.css
+            - name: THEME_JS_URL
+              value: https://b-rad.dev/theme/1.3.0/theme.min.js
+            - name: PALWORLD_API_USER
+              value: admin
+            - name: PALWORLD_API_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: palworld-admin
+                  key: password
