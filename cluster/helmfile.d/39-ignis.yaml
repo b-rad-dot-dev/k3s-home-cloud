@@ -1,0 +1,65 @@
+repositories:
+  - name: bjw-s
+    url: https://bjw-s-labs.github.io/helm-charts
+
+releases:
+  - name: obsidian
+    namespace: obsidian
+    createNamespace: true
+    chart: bjw-s/app-template
+    version: 5.1.0
+    values:
+      - controllers:
+          main:
+            containers:
+              main:
+                image:
+                  repository: nobbe/ignis
+                  tag: latest
+                env:
+                  PUID: "1000"
+                  PGID: "1000"
+                  UV_THREADPOOL_SIZE: "64"
+                ports:
+                  - name: http
+                    containerPort: 8080
+
+        service:
+          main:
+            controller: main
+            ports:
+              http:
+                port: 8080
+
+        ingress:
+          main:
+            className: nginx
+            annotations:
+              cert-manager.io/cluster-issuer: "letsencrypt-production"
+              nginx.ingress.kubernetes.io/auth-url: https://login.b-rad.dev/authorize
+            hosts:
+              - host: obsidian.b-rad.dev
+                paths:
+                  - path: /
+                    pathType: ImplementationSpecific
+                    service:
+                      identifier: main
+                      port: http
+            tls:
+              - hosts:
+                  - obsidian.b-rad.dev
+
+        persistence:
+          data:
+            enabled: true
+            type: persistentVolumeClaim
+            storageClass: nfs-csi
+            accessMode: ReadWriteMany
+            size: 5Gi  # csi-driver-nfs ignores actual quota, but a size is still required
+            globalMounts:
+              - path: /vaults
+                subPath: vaults
+              - path: /app/data
+                subPath: data
+              - path: /app/obsidian-app
+                subPath: obsidian-app
