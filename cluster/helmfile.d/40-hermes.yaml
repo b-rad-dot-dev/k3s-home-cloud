@@ -1,0 +1,56 @@
+repositories:
+  - name: bjw-s
+    url: https://bjw-s-labs.github.io/helm-charts
+
+releases:
+  - name: hermes
+    namespace: hermes
+    createNamespace: true
+    chart: bjw-s/app-template
+    version: 5.1.0
+    values:
+      - controllers:
+          main:
+            revisionHistoryLimit: 0
+            containers:
+              main:
+                image:
+                  repository: nousresearch/hermes-agent
+                  tag: latest
+                args: ["gateway", "run"]
+                env:
+                  HERMES_UID: "1000"
+                  HERMES_GID: "1000"
+                  HERMES_WRITE_SAFE_ROOT: "/opt/data:/mnt/obsidian/vaults"
+                ports:
+                  - name: http
+                    containerPort: 8642
+                resources:
+                  requests:
+                    memory: 2Gi
+
+
+        service:
+          main:
+            controller: main
+            ports:
+              http:
+                port: 8642
+
+        persistence:
+          data:
+            enabled: true
+            type: persistentVolumeClaim
+            storageClass: nfs-csi
+            accessMode: ReadWriteMany
+            size: 5Gi  # csi-driver-nfs ignores actual quota, but a size is still required
+            globalMounts:
+              - path: /opt/data
+                subPath: data
+          obsidian-data:
+            enabled: true
+            type: nfs
+            server: 10.0.0.15
+            path: /volume1/NFS/obsidian-obsidian/vaults   # whatever subpath csi-driver-nfs created
+            globalMounts:
+              - path: /mnt/obsidian/vaults

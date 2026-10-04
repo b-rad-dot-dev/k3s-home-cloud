@@ -9,6 +9,8 @@ releases:
     chart: open-webui/open-webui
     version: 14.6.0
     values:
+      - nodeSelector:
+          kubernetes.io/hostname: "laxus"
       - ollama:
           enabled: false
       - persistence:
