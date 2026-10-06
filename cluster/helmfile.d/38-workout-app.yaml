@@ -2,7 +2,7 @@ releases:
   - name: workout-app
     namespace: workout-app
     chart:  oci://gitea.b-rad.dev/brad/helm-charts/workout-app
-    version: 1.8.0
+    version: 1.8.1
     values:
       - service:
           port: 8080
